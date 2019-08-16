@@ -1,0 +1,192 @@
+.chroniques{
+  padding-top: 30px;
+  padding-bottom: 150px;
+
+  a.soumettre {
+    float: right;
+    margin-top: -95px;
+    font-size: 0.9rem;
+    padding: 10px 25px 10px 25px;
+    border-radius: 5px;
+    color: white;
+    font-weight: bold;
+    text-transform: uppercase;
+    text-decoration: none;
+    opacity: 0.8;
+    font-size: 0.8rem;
+    transition: all 0.3s;
+    background-color: #9d3432;
+
+    &:hover
+    {
+      opacity: 0.9;
+    }
+  }
+
+  h1
+  {
+    font-size: 2rem;
+    color: #4f5057;
+    font-weight: 900;
+    text-transform: uppercase;
+    margin-bottom: 0px;
+  }
+
+  h2
+  {
+    margin-top: -5px;
+    font-size: 1.4rem;
+    font-weight: 400;
+    color: #757680;
+    margin-bottom: 50px;
+  }
+
+  & .chroniques__inner
+  {
+    padding: 10px;
+    transition: all 0.3s;
+
+    &:hover { padding-top: 5px; padding-bottom: 15px;}
+  }
+
+  & .chroniques__block
+  {
+    position: relative;
+    background-color: rgba(250,250,250,0.25);
+    box-shadow: 1px 1px 47px 10px rgba(0,0,0,0.05);
+    border-radius: 10px;
+    padding: 25px;
+    transition: all 0.3s;
+    opacity: 0.9;
+
+    & a.chroniques-link
+    {
+      display: block;
+      position: absolute;
+      z-index: 999;
+      left:0;
+      right: 0;
+      bottom: 0;
+      top: 0;
+      background: transparent;
+    }
+
+
+
+    & h3
+    {
+      font-weight: 900;
+      font-size: 1.5rem;
+      margin-bottom: 0;
+
+      & .author
+      {
+        font-weight: 400;
+          text-transform: none;
+      }
+    }
+
+    & .date
+    {
+      color: #858585;
+    }
+
+    & p
+    {
+      font-size: 1rem;
+      color: #4e505d;
+      font-family: "Lato", sans-serif;
+      font-weight: 400;
+    }
+
+    .chronique__block--image
+    {
+      position: absolute;
+      background: grey;
+      left: 25px;
+      bottom: 25px;
+      top: 25px ;
+      border-radius: 10px;
+      width: 280px;
+      background-size: cover;
+      border: none;
+    }
+
+    .chronique__block--image-min
+    {
+      width: 180px;
+    }
+
+
+    .chronique__block--content
+    {
+      position: relative;
+      padding-left: 300px;
+    }
+
+    .chronique__block--content-min
+    {
+      position: relative;
+      padding-bottom: 5px;
+      padding-left: 200px;
+    }
+
+    & .excerpt
+    {
+      max-height: 222px;
+      margin-top: 10px;
+      overflow: hidden;
+    }
+
+
+
+
+  }
+  & .chroniques__block-min
+  {
+    height: 320px;
+  }
+}
+
+
+@include media-breakpoint-down(md) {
+
+.chroniques a.soumettre
+{
+  margin-top: -50px;
+}
+
+  .chroniques .chroniques__block
+  {
+    height: auto;
+  }
+.chroniques .chroniques__block .chronique__block--image
+{
+
+  right: 25px;
+  width: auto;
+  height: 200px;
+}
+.chroniques .chroniques__block .chronique__block--content
+{
+  padding-left: 0;
+  padding-top: 210px;
+  height: auto;
+}
+  /* MIN */
+  .chroniques .chroniques__block-min
+  {
+  }
+  .chroniques .chroniques__block .chronique__block--image-min
+  {
+    right: 25px;
+    width: auto;
+    height: 140px;
+    background-position: center;
+  }
+  .chroniques .chroniques__block .chronique__block--content-min
+  {
+    padding-left: 0;
+    padding-top: 154px;
+  }
+}

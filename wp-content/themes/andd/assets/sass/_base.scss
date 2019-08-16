@@ -1,0 +1,196 @@
+/* STYLE POUR LA PAGE PROMTIONELLE */
+body
+{
+    height: 100%;
+    background: url('../img/background.jpg');
+    background-repeat: no-repeat;
+    background-position: top;
+    background-color: #f3f2f3;
+    padding-top: 80px;
+    min-width: 300px;
+    font-family: "Lato", sans-serif;
+}
+
+.flex
+{
+  display: flex;
+}
+
+a
+{
+  color: #973659;
+  text-decoration: none;
+}
+
+h4, p
+{
+  color: #757680;
+}
+
+h3
+{
+  color: #4f5057;
+}
+
+/* BTN */
+
+.btn
+{
+  display: inline-block;
+  padding: 10px 25px 10px 25px;
+  border-radius: 5px;
+  font-size: 1rem;
+  background-color: #9d3432;
+  color: white;
+  border: none;
+  font-weight: bold;
+  text-transform: uppercase;
+  transition: all 0.3s;
+  box-shadow: 0 0 17px rgba(0,0,0,0.1);
+
+  &:hover
+  {
+    background-color: #aa3b39;
+    cursor: pointer;
+  }
+}
+
+/* NAVBAR */
+
+.navbar-top
+{
+  position: fixed;
+  z-index: 9999;
+  left: 0;
+  top: 0;
+  right: 0;
+  height: 80px;
+  transition: all 0.3s;
+
+  background: rgba(255,255,255,0.18);
+  box-shadow: 0px 2px 17px 7px rgba(0,0,0,0.05);
+
+  &-active
+  {
+    background: rgba(255,255,255,0.97);
+    background-image: url('../img/navbaractive.jpg');
+    height: 50px;
+  }
+
+  & .navbar-top__title
+  {
+    padding-top: 21px;
+    width: 360px;
+
+    & h2
+    {
+      color: #616474;
+      font-size: 1.2rem;
+      font-weight: 900;
+      line-height: 1.4rem;
+      margin-bottom: 0;
+      font-family: "Lato", sans-serif;
+          transition: all 0.3s;
+    }
+    & h3
+    {
+      color: #a2a4ad;
+      font-size: 0.9rem;
+      font-weight: 700;
+      font-family: "Lato", sans-serif;
+    }
+  }
+
+  &-active .navbar-top__title h2
+  {
+    font-size: 1rem;
+    margin-top: -16px;
+  }
+
+  &-active .navbar-top__title h3
+  {
+    font-size: 0.8rem;
+    margin-top: -2px;
+    opacity: 0.7;
+  }
+
+  & .navbar-top__menu
+  {
+    flex: 1;
+    text-align: right;
+    height: 70px;
+
+    & ul
+    {
+            padding-left: 0;
+            padding-top: 26px;
+            transition: all 0.3s;
+
+    }
+
+    & li
+    {
+      list-style-type: none;
+      padding-top: 17px;
+      padding-bottom: 32px;
+      padding-left: 20px;
+      padding-right: 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-family: "Lato", sans-serif;
+      opacity: 0.5;
+      transition: all 0.3s;
+      background-image: url('../img/puce.png');
+      background-repeat: no-repeat;
+      background-size: 20px;
+      background-position: -20px 0;
+      display:inline;
+
+      &  a
+      {
+        color: #34353f;
+        text-decoration: none;
+      }
+
+      &:hover
+      {
+        opacity: 0.7;
+        cursor: pointer;
+      }
+    }
+
+    .current-menu-item
+    {
+    opacity: 0.7;
+    font-weight: 900;
+    background-position: center 50px;
+    }
+  }
+
+  &-active .navbar-top__menu
+  {
+    height: 50px;
+
+    & ul
+    {
+      padding-top: 10px;
+    }
+
+    & li
+    {
+      list-style-type: none;
+      padding-top: 17px;
+      padding-bottom: 18px;
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+
+    .current-menu-item
+    {
+    opacity: 0.7;
+    font-weight: 900;
+    background-position: center 40px;
+    }
+  }
+}
