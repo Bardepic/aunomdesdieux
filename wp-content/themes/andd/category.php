@@ -22,7 +22,7 @@ $catDescription = $cat->description;
     <div class="container chroniques">
       <h1><?php echo $catName;?></h1>
       <h2><?php echo $catDescription; ?></h2>
-        <a class="soumettre" href="<?php echo the_permalink(); ?>">Me soumettre une lecture</a>
+        <a class="soumettre" href="mailto:gautierdemadron@hotmail.fr">Me soumettre une lecture</a>
 <?php
 $isFirstPost = true;
 while (have_posts()) {
