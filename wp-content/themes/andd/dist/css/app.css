@@ -2989,7 +2989,7 @@ h3 {
     margin-bottom: 150px; }
     .promo .auteur h4 {
       font-size: 1.1rem;
-      font-weight: 900;
+      font-weight: 700;
       text-transform: none;
       margin-bottom: 0; }
     .promo .auteur h3 {
@@ -2998,7 +2998,7 @@ h3 {
       margin-top: -5px;
       text-transform: none; }
     .promo .auteur p {
-      font-size: 1.2rem;
+      font-size: 1rem;
       text-align: justify; }
 
 .promo .helariapedia {
@@ -3152,6 +3152,10 @@ h3 {
     padding-right: 70px; }
   .post .post-right {
     padding-left: 0px; }
+
+@media (max-width: 991.98px) {
+  .post {
+    padding-top: 10px; } }
 
 .post h1 {
   color: #757680;

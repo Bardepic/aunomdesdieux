@@ -13,6 +13,13 @@
   }
 }
 
+@include media-breakpoint-down(md) {
+  .post
+  {
+    padding-top: 10px;
+  }
+}
+
 .post
 {
   h1 {

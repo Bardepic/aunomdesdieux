@@ -20,11 +20,11 @@
         <div class="col-lg-12 col-xs-6">
           <div class="row">
             <div class="chroniqueurs">
-              <div class="chroniqueurs__img lectricecompulsive"><img src="wp-content/themes/andd/assets/img/chroniquer1.png" /></div>
-              <div class="chroniqueurs__img helariapedia"><img src="wp-content/themes/andd/assets/img/chroniquer2.png" /></div>
-              <div class="chroniqueurs__img fildediane"><img src="wp-content/themes/andd/assets/img/chroniquer3.png" /></div>
-              <div class="chroniqueurs__img instantlecteur"><img src="wp-content/themes/andd/assets/img/chroniquer4.png" /></div>
-              <div class="chroniqueurs__img passionconfidences"><img src="wp-content/themes/andd/assets/img/chroniquer5.png" /></div>
+              <a target="_blanck" href="https://lalectricecompulsive.home.blog/2019/07/31/au-nom-des-dieux-livre-i-de-gautier-durrieu-de-madron-service-presse/?fbclid=IwAR0LGv46zkWcIx5M7ny7D4pkENr71YOjaiJMDV5fvwZLzghCXsVogRIMgpw"><div class="chroniqueurs__img lectricecompulsive"><img src="wp-content/themes/andd/assets/img/chroniquer1.png" /></div></a>
+              <a target="_blanck" href="https://helariapedia.wordpress.com/2019/07/25/destinee-manifeste/?fbclid=IwAR1CA4baOKtEijQIqs87a4BpqTgsdyNToEYarAl3eFH4e4NpGkfeOgnEclM"><div class="chroniqueurs__img helariapedia"><img src="wp-content/themes/andd/assets/img/chroniquer2.png" /></div></a>
+              <a target="_blanck" href="https://fildediane.wordpress.com/2019/07/15/au-nom-des-dieux-de-leau-et-du-sang-livre-1-destinee-manifeste-de-gautier-durrieu-de-madron/?fbclid=IwAR1CVmBBI8sKPC4WIxOodyEBTdz0F0vE7jCnvYg-1TUx2ZfEK-IFdFRHJ1U"><div class="chroniqueurs__img fildediane"><img src="wp-content/themes/andd/assets/img/chroniquer3.png" /></div></a>
+              <a target="_blanck" href="https://linstantdeslecteurs.blogspot.com/2019/07/au-nom-des-dieux-de-leau-et-du-sang.html"><div class="chroniqueurs__img instantlecteur"><img src="wp-content/themes/andd/assets/img/chroniquer4.png" /></div>
+              <a target="_blanck" href="https://passionsconfidences.wordpress.com/2019/08/03/de-leau-et-du-sang-au-nom-des-dieux-destinee-manifeste/"><div class="chroniqueurs__img passionconfidences"><img src="wp-content/themes/andd/assets/img/chroniquer5.png" /></div></a>
             </div>
           </div>
         </div>
