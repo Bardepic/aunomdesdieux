@@ -7,6 +7,7 @@
 <!-- -->
 <?php the_post(); ?>
 <div class="container post">
+  <div class="row">
     <div class="col-lg-4 post-left">
         <div class="post-left__couverture" style="background-image: url(<?php echo get_the_post_thumbnail_url(); ?>)"></div>
 <div style="flex: none; width: 100%;">
@@ -26,14 +27,18 @@
 
     </div>
   <br />
-  <label>Article publié par Gautier Durrieu de Madron, le <?php the_date(); ?></label>
-  <p style="font-size: 1rem; margin-top: -20px;">Avec l'aval de <?php the_author(); ?></p>
+  <div class="col-lg-12">
+    <div class="row">
+  <label style="display: block;">Article publié par Gautier Durrieu de Madron, le <?php the_date(); ?></label>
+</div>
+</div>
   <br />
   <div style="display: none;">
     <h4>COMMENTAIRES</h4>
   <div id="comment-template" class="comment">
     <?php comments_template(); ?>
   </div>
+</div>
 </div>
 </div>
 <?php get_footer(); ?>

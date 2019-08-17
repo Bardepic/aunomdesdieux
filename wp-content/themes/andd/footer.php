@@ -1,5 +1,6 @@
   <?php wp_footer(); ?>
   <div class="container">
+    <div class="row">
     <div class="footer">
     <a href="https://facebook.com/aunomdesdieux" target="_blank"><div class="social-icons fb-icon"></div></a>
       <a href="https://facebook.com/aunomdesdieux" target="_blank"><div class="social-icons fb-insta"></div></a>
@@ -8,5 +9,6 @@
         <p>Tous droits réservés 2019-2020</p>
     </div>
   </div>
+</div>
 </body>
 </html>
