@@ -20,6 +20,14 @@
   }
 }
 
+@include media-breakpoint-down(xs) {
+  .post
+  {
+    padding-left: 25px;
+    padding-right: 25px;
+  }
+}
+
 .post
 {
   h1 {

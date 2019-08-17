@@ -3157,6 +3157,11 @@ h3 {
   .post {
     padding-top: 10px; } }
 
+@media (max-width: 575.98px) {
+  .post {
+    padding-left: 25px;
+    padding-right: 25px; } }
+
 .post h1 {
   color: #757680;
   font-weight: 900;
