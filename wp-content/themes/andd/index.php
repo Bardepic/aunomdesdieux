@@ -25,6 +25,7 @@
               <a target="_blanck" href="https://fildediane.wordpress.com/2019/07/15/au-nom-des-dieux-de-leau-et-du-sang-livre-1-destinee-manifeste-de-gautier-durrieu-de-madron/?fbclid=IwAR1CVmBBI8sKPC4WIxOodyEBTdz0F0vE7jCnvYg-1TUx2ZfEK-IFdFRHJ1U"><div class="chroniqueurs__img fildediane"><img src="wp-content/themes/andd/assets/img/chroniquer3.png" /></div></a>
               <a target="_blanck" href="https://linstantdeslecteurs.blogspot.com/2019/07/au-nom-des-dieux-de-leau-et-du-sang.html"><div class="chroniqueurs__img instantlecteur"><img src="wp-content/themes/andd/assets/img/chroniquer4.png" /></div>
               <a target="_blanck" href="https://passionsconfidences.wordpress.com/2019/08/03/de-leau-et-du-sang-au-nom-des-dieux-destinee-manifeste/"><div class="chroniqueurs__img passionconfidences"><img src="wp-content/themes/andd/assets/img/chroniquer5.png" /></div></a>
+              <a target="_blanck" href="https://mabibliothequeperso.com/de-leau-et-du-sang-au-nom-des-dieux-1-destinee-manifeste-gautier-durrieu-de-madron?fbclid=IwAR2WF3I32vvxbKyyesFBl3J1rbH1WxHkBGQDSB3A2d0UiYUY1fogb7rQrXo"><div class="chroniqueurs__img passionconfidences" style="margin-top: 8px;"><img src="wp-content/themes/andd/assets/img/chroniquer6.png" /></div></a>
             </div>
           </div>
         </div>
