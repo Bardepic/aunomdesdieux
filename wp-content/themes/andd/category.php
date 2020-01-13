@@ -25,8 +25,14 @@ $catDescription = $cat->description;
         <a class="soumettre" href="mailto:gautierdemadron@hotmail.fr">Me soumettre une lecture</a>
 <?php
 $isFirstPost = true;
-while (have_posts()) {
-  the_post();
+$allPosts = new WP_Query([
+  "post_type" => "post",
+  "post_status" => "publish",
+  "posts_per_page" => -1,
+  "category_name" => $cat->name
+]);
+while ($allPosts->have_posts()) {
+  $allPosts->the_post();
   if ($isFirstPost) {
     $isFirstPost = false;
     ?>
