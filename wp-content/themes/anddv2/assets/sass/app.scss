@@ -1,0 +1,56 @@
+@import "~bootstrap/scss/bootstrap-reboot";
+@import "~bootstrap/scss/bootstrap-grid";
+@import "base.scss";
+@import "index.scss";
+@import "chroniques.scss";
+@import "post.scss";
+@import "footer.scss";
+@import "book.scss";
+
+
+
+  @include media-breakpoint-down(md) {
+.promo .couverture-block {
+    margin-top: 60px;
+  }
+.promo .couverture-block .couverture {
+    background-size: cover;
+    width: auto;
+    height: 520px;
+    margin: auto;
+    max-width: 60%;
+  }
+
+.navbar-top .navbar-top__title
+{
+  width: auto;
+}
+  .navbar-top .navbar-top__title h2
+  {
+    font-size: 0.8rem;
+  }
+
+}
+
+@include media-breakpoint-down(xs) {
+.promo .couverture-block {
+  margin-top: 60px;
+}
+.promo .couverture-block .couverture {
+  background-size: cover;
+  width: auto;
+  height: 310px;
+  margin: auto;
+  max-width: 60%;
+}
+
+.navbar-top__title
+{
+  display: none;
+}
+
+.promo
+{
+  padding-top: 20px;
+}
+}

@@ -1,0 +1,323 @@
+/* STYLE POUR LA PAGE PROMTIONELLE */
+.promo
+{
+  padding-top: 60px;
+  font-family: "Lato", sans-serif;
+  margin-bottom: 20px;
+
+
+& p {
+  color: #d2d2d2;
+}
+
+    & .promo-content__title
+    {
+
+      animation-duration: 1s;
+      opacity: 0;
+      animation-name: animationtitle;
+      animation-timing-function: ease;
+      animation-iteration-count: 1;
+      animation-delay: 0.5s;
+      animation-fill-mode: forwards;
+      text-align: center;
+
+
+      @keyframes animationtitle {
+      0% {
+      margin-top: 0;
+      opacity: 0;
+      }
+      100% {
+      margin-top: 23px;
+      opacity: 1;
+      }
+      }
+
+      & h1
+      {
+        color: #757680;
+        text-transform: uppercase;
+        font-weight: 900;
+        font-size: 1.4rem;
+        line-height: 2.7rem;
+        text-align: center;
+        color: red;
+        opacity: 0;
+      }
+
+      & h2
+      {
+        color: white;
+        font-weight: 400;
+        color: #929292;
+        margin-top: 40px;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 1.1rem;
+        margin-bottom: 30px;
+      }
+
+      & p 
+      {
+        max-width: 650px;
+        margin: auto;
+        margin-top: 20px;
+      }
+
+
+      & .social-icons
+      {
+        float: left;
+        width: 50px;
+        height: 42px;
+        background-size: 30px;
+        background-repeat: no-repeat;
+        background-position: center;
+        opacity: 0.7;
+        transition: all 0.3s;
+        cursor: pointer;
+
+        &:hover
+        {
+          opacity: 0.9;
+        }
+      }
+
+        & .fb-icon
+        {
+        background-image: url('../img/fb.png');
+        margin-left: 15px;
+        }
+
+        & .fb-insta
+        {
+        background-image: url('../img/insta.png');
+        }
+
+/* ILS EN PARLENT */
+
+      & h4
+      {
+        color: #a1a1a1;
+        font-size: 1.3rem;
+      }
+
+      & .chroniqueurs
+      {
+        margin-top: 30px;
+
+      & .chroniqueurs__img
+      {
+        display: inline-block;
+        opacity: 0.7;
+        transition: all 0.3s;
+        &:hover
+        { opacity: 1; cursor: pointer; }
+      }
+      }
+
+
+
+
+      /*  END */
+
+
+    }
+
+
+/* COUVERTURE */
+
+
+ & .couverture-block
+ {
+   position: relative;
+   text-align: center;
+   margin-top: -80px;
+   transition: all 0.3s;
+
+    & .couverture
+    {
+        width: 100%;
+        height: 560px;
+        background-image: url('../img/couverture.png');
+        background-size: cover;
+        background-position: center -10px;
+        transition: all 0.3s;
+
+        &:hover
+        {
+          background-position: center -20px;
+          opacity: 0.9;
+          cursor: pointer;
+        }
+    }
+
+
+
+    & .notes
+    {
+      margin-top: 20px;
+      height: 100px;
+      width: 100%;
+    }
+
+    & p
+    {
+      color: #757680;
+      text-transform: uppercase;
+      padding: 0; margin: 0; margin-top: 12px;
+      font-weight: 700;
+      font-size: 0.9rem;
+
+      & .subtitle
+      {
+        color: #8d8f9c;
+        font-size: 0.8rem;
+      }
+    }
+
+   }
+
+   /* AUTEUR */
+
+   & .auteur
+   {
+     margin-top: 90px;
+     min-height: 400px;
+     margin-bottom: 150px;
+
+    & h4
+    {
+      font-size: 1.1rem;
+      font-weight: 700;
+      text-transform: none;
+      margin-bottom : 0;
+    }
+    & h3
+      {
+        font-size: 1.6rem;
+        font-weight: 900;
+        margin-top: -5px;
+        text-transform: none;
+      }
+
+     & p
+     {
+       font-size: 1rem;
+       text-align: justify;
+     }
+   }
+}
+
+.argument 
+{
+  min-height: 140px;
+
+  & .inner-argument
+  {
+    min-height: 340px;
+
+    & h3 
+    {
+      width: 470px;
+      margin-top: 70px;
+      color: #d2d2d2;
+      font-weight: normal;
+      font-family: "Buenard", serif;
+      font-size: 1.8rem;
+      line-height: 2.2rem;
+    }
+  }
+
+  & .inner-argument--downright { 
+    clip-path: polygon(0 0, 100% 15%, 100% 100%, 0 85%);
+    background-color: #3d3d3d;
+    height: 600px;
+    padding-top: 90px;
+   }
+
+   & .inner-argument--upright { 
+    clip-path: polygon(0 15%, 100% 0, 100% 100%, 0 100%);
+    background-color: #3d3d3d;
+    height: 600px;
+    padding-top: 110px;
+   }
+}
+
+.entertheuniverse
+{
+  min-height: 700px;
+  text-align: center;
+  padding-top: 70px;
+}
+
+
+.presse 
+{
+  margin-top: 90px;
+  margin-bottom: 140px;
+
+  & h2 
+  {
+    font-size: 1.7rem;
+    margin-bottom: 60px;
+  }
+
+  & p 
+  {
+    margin-left: 70px;
+    font-size: 1.4rem;
+  }
+
+  & .presse_content
+  {
+    min-height: 70px;
+    padding-bottom: 20px;
+  }
+
+  & img 
+  {
+    height: 40px;
+    opacity: 0.4;
+    transition: all 0.2s;
+
+    &:hover 
+    {
+      opacity: 0.6;
+    }
+  }
+}
+
+@include media-breakpoint-down(md) {
+  .promo
+  {
+    .lectricecompulsive
+    {
+    }
+    .fildediane
+    {
+      margin-left: 40px;
+    }
+
+    .instantlecteur
+    {
+      width: 320px;
+    }
+
+  }
+}
+
+@include media-breakpoint-down(xs) {
+  .promo
+  {
+    .lectricecompulsive, .helariapedia, .fildediane,
+    .instantlecteur, .passionconfidences
+    {
+      margin: 0;
+      width: 100%;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+  }
+}

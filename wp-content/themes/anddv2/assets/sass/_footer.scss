@@ -1,0 +1,43 @@
+.footer
+{
+  min-height: 80px;
+  width: 100%;
+  padding-top: 10px;
+  border-top: 1px solid rgba(213,215,221,0.7);
+
+  & p
+  {
+    padding: 0; margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.2rem;
+  }
+
+  & .social-icons
+  {
+    float: right;
+    width: 30px;
+    height: 42px;
+    background-size: 30px;
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: 0.7;
+    transition: all 0.3s;
+    cursor: pointer;
+
+    &:hover
+    {
+      opacity: 0.9;
+    }
+  }
+
+    & .fb-icon
+    {
+    background-image: url('../img/fb.png');
+    margin-left: 15px;
+    }
+
+    & .fb-insta
+    {
+    background-image: url('../img/insta.png');
+    }
+}

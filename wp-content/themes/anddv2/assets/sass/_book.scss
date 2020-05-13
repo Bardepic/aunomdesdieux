@@ -1,0 +1,41 @@
+.book
+{
+    width: 240px;
+    margin-bottom: 80px;
+    margin-left: 20px;
+    margin-right: 20px;
+
+    & .couv 
+    {
+        height: 340px;
+        width: 240px;
+        background-size: cover;
+        box-shadow: 1px 1px 17px rgba(0,0,0,0.4);
+    }
+
+    & .couv1 { background-image: url('../img/livre1.jpg'); }
+    & .couv2 { background-image: url('../img/livre2.jpg'); }
+
+    & p.title 
+    {
+        margin-top: 30px;
+        color: #d2d2d2;
+        font-size: 1.3rem;
+    }
+
+    & .btn 
+    {
+        background: #4b4b4b;
+        border-radius: 5px;
+        text-align: center;
+        color: white;
+        padding: 8px 25px 8px 25px;
+        font-size: 1rem;
+        text-transform:  none;
+        margin-top: 15px;
+        font-family: "Buenard", serif;
+    }
+
+    & .btn--yellow { background: #b89454; }
+    & .btn--green { background: #9aa064; }
+}
