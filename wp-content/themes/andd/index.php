@@ -7,6 +7,7 @@
       <div class="col-lg-7 promo-content__title">
         <?php the_post(); ?>
         <div id="article">
+        <h1><?php the_title(); ?></h1>
         <?php the_content(); ?>
         </div>
         <div class="col-lg-12 col-xs-6" style="margin-top: 40px; height: 120px;">
