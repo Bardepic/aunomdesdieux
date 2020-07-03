@@ -8,7 +8,7 @@
  <meta property="og:description" content="La saga fantastique par Gautier Durrieu de Madron - comment réagiriez vous au découvrant que toutes les légendes antiques étaient vraies ?"/>
  <meta property="og:type" content="website"/>
  <meta property="og:url" content="https://aunomdesdieux.fr"/>
- <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,900&display=swap" rel="stylesheet">
+ <link href="https://fonts.googleapis.com/css?family=Raleway:300,400,700,900&display=swap" rel="stylesheet">
  <link href="https://fonts.googleapis.com/css?family=Buenard:300,400,700,900&display=swap" rel="stylesheet">
 
  <meta name="twitter:card" content="summary" />
@@ -16,7 +16,6 @@
  <meta name="twitter:image:alt" content="Plongez dans la saga fantastique Au Nom des Dieux"/>
  <meta name="twitter:title" content="Au Nom Des Dieux"/>
  <meta name="twitter:description" content="La saga fantastique par Gautier Durrieu de Madron - comment réagiriez vous au découvrant que toutes les légendes antiques étaient vraies ?"" />
-
 </head>
 <?php wp_head(); ?>
 

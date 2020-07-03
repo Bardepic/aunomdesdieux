@@ -93,7 +93,7 @@
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-eval("console.log(\"here\");\r\n\r\nconst nav = document.querySelector('#navbar');\r\nwindow.addEventListener(\"scroll\", function() {\r\n  if (this.scrollY <= 100) {\r\n    nav.className = 'navbar-top';\r\n  } else {\r\n    nav.className = 'navbar-top navbar-top-active';\r\n  }\r\n});\r\n\n\n//# sourceURL=webpack:///./assets/js/app.js?");
+eval("\r\nconst nav = document.querySelector('#navbar');\r\nwindow.addEventListener(\"scroll\", function() {\r\n  if (this.scrollY <= 100) {\r\n    nav.className = 'navbar-top';\r\n  } else {\r\n    nav.className = 'navbar-top navbar-top-active';\r\n  }\r\n});\r\n\r\n\n\n//# sourceURL=webpack:///./assets/js/app.js?");
 
 /***/ }),
 

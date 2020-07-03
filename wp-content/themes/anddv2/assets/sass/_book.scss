@@ -16,11 +16,35 @@
     & .couv1 { background-image: url('../img/livre1.jpg'); }
     & .couv2 { background-image: url('../img/livre2.jpg'); }
 
+    & p 
+    { margin-top: 0; font-size: 1.1rem;}
+    
+
     & p.title 
     {
-        margin-top: 30px;
-        color: #d2d2d2;
-        font-size: 1.3rem;
+        margin-top: 40px;
+        margin-bottom: 5px;
+        color: #b89454;
+        font-size: 1.4rem;
+        font-weight: 900;
+        font-family: $font-primary;
+        text-transform: uppercase;
+    }
+
+    & p.title--green
+    {
+        color: #9aa064;
+    }
+
+
+
+    & p.subtitle 
+    {
+        color: #999;
+        font-size: 1rem;
+        font-weight: 400;
+        margin-top: 20px;
+        font-family: $font-primary;
     }
 
     & .btn 
@@ -34,6 +58,13 @@
         text-transform:  none;
         margin-top: 15px;
         font-family: "Buenard", serif;
+        transition: all 0.4s;
+        text-decoration: none;
+
+        &:hover 
+        {
+            box-shadow: 1px 1px 15px 2px rgba(0,0,0,0.2);
+        }
     }
 
     & .btn--yellow { background: #b89454; }

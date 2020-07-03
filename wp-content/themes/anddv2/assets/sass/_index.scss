@@ -1,18 +1,61 @@
 /* STYLE POUR LA PAGE PROMTIONELLE */
+
 .promo
 {
   padding-top: 60px;
-  font-family: "Lato", sans-serif;
-  margin-bottom: 20px;
+  font-family: $font-primary;
+  padding-bottom: 80px;
+  background-image: url('../img/background_mountain.png');
 
 
-& p {
-  color: #d2d2d2;
+
+  &  .social-icons
+  {
+    width: 30px;
+    margin: auto;
+    height: 42px;
+    background-size: 30px;
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: 0.7;
+    transition: all 0.3s;
+    cursor: pointer;
+
+    &:hover
+    {
+      opacity: 0.9;
+    }
+  }
+
+    & .fb-icon
+    {
+    background-image: url('../img/fb.png');
+    margin-right: 40px;
+    margin-left: 0;
+    }
+
+    & .fb-insta
+    {
+    background-image: url('../img/insta.png');
+    }
+
+
+& .promo-left img 
+{
+  height: 460px;
+
+  opacity: 0;
+  animation-duration: 1s;
+  animation-name: animationtitle;
+  animation-timing-function: ease;
+  animation-iteration-count: 1;
+  animation-delay: 0.8s;
+  animation-fill-mode: forwards;
 }
 
     & .promo-content__title
     {
-
+      padding-top: 50px;
       animation-duration: 1s;
       opacity: 0;
       animation-name: animationtitle;
@@ -20,7 +63,6 @@
       animation-iteration-count: 1;
       animation-delay: 0.5s;
       animation-fill-mode: forwards;
-      text-align: center;
 
 
       @keyframes animationtitle {
@@ -39,61 +81,31 @@
         color: #757680;
         text-transform: uppercase;
         font-weight: 900;
-        font-size: 1.4rem;
+        font-size: 3rem;
         line-height: 2.7rem;
-        text-align: center;
-        color: red;
-        opacity: 0;
+        color: $color-primary;
       }
 
       & h2
       {
-        color: white;
         font-weight: 400;
-        color: #929292;
-        margin-top: 40px;
+        color: #404149;
+        margin-top: 14px;
         font-weight: 600;
         text-transform: uppercase;
-        font-size: 1.1rem;
+        font-size: 1.2rem;
+
         margin-bottom: 30px;
       }
 
       & p 
       {
-        max-width: 650px;
-        margin: auto;
+        max-width: 550px;
         margin-top: 20px;
+        letter-spacing: -0.03rem;
+        font-size: 1.25rem;
       }
 
-
-      & .social-icons
-      {
-        float: left;
-        width: 50px;
-        height: 42px;
-        background-size: 30px;
-        background-repeat: no-repeat;
-        background-position: center;
-        opacity: 0.7;
-        transition: all 0.3s;
-        cursor: pointer;
-
-        &:hover
-        {
-          opacity: 0.9;
-        }
-      }
-
-        & .fb-icon
-        {
-        background-image: url('../img/fb.png');
-        margin-left: 15px;
-        }
-
-        & .fb-insta
-        {
-        background-image: url('../img/insta.png');
-        }
 
 /* ILS EN PARLENT */
 
@@ -210,39 +222,114 @@
    }
 }
 
+
+
 .argument 
 {
+  position: relative;
+  background: #fdfdfd;
   min-height: 140px;
 
   & .inner-argument
   {
     min-height: 340px;
 
-    & h3 
+
+    & h3     
     {
-      width: 470px;
-      margin-top: 70px;
-      color: #d2d2d2;
+      color: #9d2c3f;
+    font-family: $font-primary;
+    font-weight: 900;
+    font-size: 2.4rem;
+    line-height: 2.7rem;
+    text-transform: uppercase;
+    margin-bottom: 0;
+  }
+
+    & p
+    {
+      margin-top: 10px;
+      width: 460px;
+      color: #3b3b3f;
       font-weight: normal;
       font-family: "Buenard", serif;
-      font-size: 1.8rem;
-      line-height: 2.2rem;
+      font-size: 1.4rem;
+      line-height: 1.8rem;
     }
   }
 
-  & .inner-argument--downright { 
-    clip-path: polygon(0 0, 100% 15%, 100% 100%, 0 85%);
-    background-color: #3d3d3d;
+  & .inner-argument--downright {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 85%);
+    background-color:#f7f7f7;
     height: 600px;
-    padding-top: 90px;
+    padding-top: 120px;
+    z-index: 98;
+    background-image: url('../img/background_city.png');
+    background-size: cover;
+   }
+
+
+   & .inner-argument--center { 
+    height: 600px;
+    padding-top: 120px;
+    background-color: #fdfdfd;
+    background-image: url('../img/background_war.png');
+    background-repeat: no-repeat;
    }
 
    & .inner-argument--upright { 
     clip-path: polygon(0 15%, 100% 0, 100% 100%, 0 100%);
-    background-color: #3d3d3d;
+    background-color: #f7f7f7;
+    background-image: url('../img/background_brasil.png');
+    background-repeat: no-repeat;
+    background-position: bottom;
     height: 600px;
-    padding-top: 110px;
+    padding-top: 240px;
    }
+
+   & .heroes
+   {
+     z-index: 99;
+     position: absolute;
+    
+     background-size: cover;
+   }
+
+   & .heroes--heroes1
+   {
+    right: 0;
+    height: 600px;
+    bottom: 18px;
+    width: 700px;
+      background-image: url('../img/heroes1.png');
+   }
+
+   & .heroes--heroes2
+   {
+     left: 0;
+     width: 600px;
+     margin-top: 36px;
+     transform: rotate(-3deg);
+     height: 500px;
+    background-image: url('../img/heroes2.png');
+   }
+
+   & .heroes--heroes3
+   {
+    right: 0;
+    height: 500px;
+    bottom: 0px;
+    width: 600px;
+    background-image: url('../img/heroes3.png');
+   }
+
+
+}
+
+.argument3
+{
+   margin-top: -140px;
+   background: transparent;
 }
 
 .entertheuniverse
@@ -250,13 +337,19 @@
   min-height: 700px;
   text-align: center;
   padding-top: 70px;
+  background-repeat: no-repeat;
+  background-color: #fdfdfd;
 }
 
 
 .presse 
 {
-  margin-top: 90px;
-  margin-bottom: 140px;
+  padding-top: 90px;
+  padding-bottom: 300px;
+  background-repeat: no-repeat;
+  background-position: bottom;
+  background-image: url('../img/background_forest.png');
+  background-color: #fdfdfd;
 
   & h2 
   {
@@ -286,6 +379,42 @@
     {
       opacity: 0.6;
     }
+  }
+
+  & .chronique-block 
+  {
+    display: flex; margin-top: 20px;
+  }
+}
+
+
+.subscribe
+{
+  position: relative;
+  margin: auto;
+  width: 780px;
+  height: 100px;
+  padding-left: 50px;
+
+  & .mj-w-res-iframe
+  {
+    position: absolute;
+    margin-left: -50%;
+  }
+}
+
+.subscribe-mobile
+{
+  position: relative;
+  display: none;
+  margin: auto;
+  width: 100%;
+  height: 210px;
+
+  & .mj-w-res-iframe
+  {
+    position: absolute;
+    margin-left: -50%;
   }
 }
 
@@ -319,5 +448,15 @@
       text-align: center;
       margin-bottom: 20px;
     }
+  }
+
+  .subscribe 
+  {
+    display: none;
+  }
+
+  .subscribe-mobile
+  {
+    display: block;
   }
 }

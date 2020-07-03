@@ -12,7 +12,7 @@ function andd_scripts() {
   wp_enqueue_style("main", get_template_directory_uri(). "/dist/css/app.css", [], "1.0.0", "all");
   wp_enqueue_style("gfont", "https://fonts.googleapis.com/css?family=Roboto:400|Raleway:400,600,700", [], "1.0.0", "all");
 
-  wp_enqueue_script("mainjs", get_template_directory_uri(). "/dist/js/app.js", [], "1.0.0", true);
+  wp_enqueue_script("mainjs", get_template_directory_uri(). "/dist/js/app.js", ["jquery"], "1.0.0", true);
 }
 
 function andd_setup() {
