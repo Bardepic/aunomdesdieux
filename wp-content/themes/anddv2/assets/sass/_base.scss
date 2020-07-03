@@ -82,6 +82,11 @@ h2
   height: 80px;
   transition: all 0.3s;
 
+
+  & .flex 
+  {
+    padding: 0 60px 0 60px;
+  }
   &-active
   {
     height: 50px;
@@ -156,6 +161,7 @@ h2
       background-size: 16px;
       background-position: center 136px;
       display:inline;
+      white-space: nowrap;
 
       &  a
       {
@@ -204,4 +210,45 @@ h2
     background-position: center 40px;
     }
   }
+}
+
+
+@include media-breakpoint-down(xs) {
+
+
+  .navbar-top
+  {
+    left: auto;
+    top: auto;
+    right: auto;
+    z-index: 1;
+    position: relative;
+    height: auto;
+
+    & .flex 
+    {
+      padding: 0;
+    }
+
+    & .navbar-top__menu
+    {
+      height: auto;
+    }
+
+    & .navbar-top__menu ul
+    {
+      position: relative;
+      display: block;
+      padding-top: 20px;
+    }
+  }
+  .navbar-top .navbar-top__menu li 
+  {
+    position: relative;
+    height: 30px;
+    display: block;
+    padding-top: 0;
+    text-align: center;
+  }
+  
 }

@@ -1,8 +1,18 @@
-
-
 <?php get_header(); ?>
 <?php wp_head(); ?>
 <!-- HEADER -->
+
+<div class="example">
+  <audio crossorigin>
+    <source src="<?php echo get_template_directory_uri();?>/audio/intro.mp3" type="audio/mpeg">
+  </audio>
+</div>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+  new GreenAudioPlayer('.example');
+});
+  </script>
+
 <section class="promo">
   <div class="container">
     <div class="row">
@@ -34,8 +44,8 @@
   </div>
 </section>
 <section class="argument">
-<div class="heroes heroes--heroes1"></div>
   <div class="inner-argument inner-argument--downright">
+  <div class="heroes heroes--heroes1"></div>
   <div class="container">
       <h3>
       des romans <br />d’Urban-Fantasy</h3>
@@ -56,8 +66,8 @@
   </div>
 </section>
 <section class="argument argument3">
-<div class="heroes heroes--heroes3"></div>
   <div class="inner-argument inner-argument--upright">
+  <div class="heroes heroes--heroes3"></div>
     <div class="container">
     <h3>
     Une trame uchronique</h3>

@@ -266,18 +266,22 @@
     z-index: 98;
     background-image: url('../img/background_city.png');
     background-size: cover;
+    overflow: hidden;
    }
 
 
    & .inner-argument--center { 
+    z-index: -1;
     height: 600px;
     padding-top: 120px;
     background-color: #fdfdfd;
     background-image: url('../img/background_war.png');
     background-repeat: no-repeat;
+    overflow: hidden;
    }
 
    & .inner-argument--upright { 
+     z-index: 99;
     clip-path: polygon(0 15%, 100% 0, 100% 100%, 0 100%);
     background-color: #f7f7f7;
     background-image: url('../img/background_brasil.png');
@@ -285,11 +289,11 @@
     background-position: bottom;
     height: 600px;
     padding-top: 240px;
+    overflow: hidden;
    }
 
    & .heroes
    {
-     z-index: 99;
      position: absolute;
     
      background-size: cover;
@@ -299,7 +303,7 @@
    {
     right: 0;
     height: 600px;
-    bottom: 18px;
+    bottom: 0px;
     width: 700px;
       background-image: url('../img/heroes1.png');
    }
@@ -459,4 +463,85 @@
   {
     display: block;
   }
+
+  .promo .promo-content__title
+  {
+    padding-top: 0;
+  }
+  .promo .promo-content__title p
+  {
+    text-align: justify;
+  }
+
+  & .promo .promo-left img
+  {
+    width: 100%;
+    height: auto;
+  }
+
+/* ARGUMENT 1*/
+ .argument .inner-argument--downright
+  {
+    height: 640px;
+    padding-top: 0;
+
+    & .heroes
+    {
+      height: 430px;
+      width: 510px;
+    }
+  }
+
+  /* ARGUMENT 2*/
+ .argument 
+ { & .inner-argument--center
+    {
+      height: 660px;
+      padding-top: 30px;
+    }
+  & .heroes--heroes2
+   {
+     width: 460px;
+     bottom: 70px;
+     transform: rotate(-6deg);
+     height: 380px;
+   } 
+  }
+/* ARGUMENT 3*/
+  .argument 
+  { & .inner-argument--upright
+     {
+       height: 720px;
+       padding-top: 150px;
+     }
+   & .heroes--heroes3
+    {
+      height: 400px;
+      width: 400px;
+    }
+   }
+
+
+   /* Presse */
+
+    .presse .imgchronique
+    {
+      position: absolute;
+    }
+
+    .presse 
+    {
+      padding-bottom: 60px;
+    }
+
+    .presse p 
+    {
+      margin: 0;
+    }
+
+    .presse .paragraphe 
+    {
+      margin-top: 48px;
+    }
+
 }

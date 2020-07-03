@@ -1,7 +1,12 @@
 .post
 {
+  text-align: center;
   font-family: "Buenard";
-  padding-top: 80px;
+  padding-top: 0px;
+  background-image: url('../img/background_mountain.png');
+  background-repeat: no-repeat;
+  margin-bottom: 0;
+  background-color: #f7f7f7;
   & .post-left
   {
     padding-right: 70px;
