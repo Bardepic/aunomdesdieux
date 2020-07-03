@@ -304,7 +304,7 @@
     right: 0;
     height: 600px;
     bottom: 0px;
-    width: 700px;
+    width: 900px;
       background-image: url('../img/heroes1.png');
    }
 
@@ -321,9 +321,9 @@
    & .heroes--heroes3
    {
     right: 0;
-    height: 500px;
+    height: 600px;
     bottom: 0px;
-    width: 600px;
+    width: 800px;
     background-image: url('../img/heroes3.png');
    }
 
@@ -479,6 +479,12 @@
     height: auto;
   }
 
+
+  .argument p
+  {
+    max-width: 400px;
+  }
+
 /* ARGUMENT 1*/
  .argument .inner-argument--downright
   {
@@ -496,7 +502,7 @@
  .argument 
  { & .inner-argument--center
     {
-      height: 660px;
+      height: 690px;
       padding-top: 30px;
     }
   & .heroes--heroes2

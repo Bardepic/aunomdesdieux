@@ -3227,7 +3227,7 @@ h2 {
     right: 0;
     height: 600px;
     bottom: 0px;
-    width: 700px;
+    width: 900px;
     background-image: url("../img/heroes1.png"); }
   .argument .heroes--heroes2 {
     left: 0;
@@ -3238,9 +3238,9 @@ h2 {
     background-image: url("../img/heroes2.png"); }
   .argument .heroes--heroes3 {
     right: 0;
-    height: 500px;
+    height: 600px;
     bottom: 0px;
-    width: 600px;
+    width: 800px;
     background-image: url("../img/heroes3.png"); }
 
 .argument3 {
@@ -3324,6 +3324,8 @@ h2 {
   .promo .promo-left img {
     width: 100%;
     height: auto; }
+  .argument p {
+    max-width: 400px; }
   /* ARGUMENT 1*/
   .argument .inner-argument--downright {
     height: 640px;
@@ -3333,7 +3335,7 @@ h2 {
       width: 510px; }
   /* ARGUMENT 2*/
   .argument .inner-argument--center {
-    height: 660px;
+    height: 690px;
     padding-top: 30px; }
   .argument .heroes--heroes2 {
     width: 460px;
