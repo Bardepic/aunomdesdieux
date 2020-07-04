@@ -21,7 +21,7 @@
         <?php the_post(); ?>
         <div id="article">
             <?php
-            $id = 1;
+            $id = 109;
             $billetindex = get_post($id);
             $titleindex = $billetindex->post_title;
             $dateindex = $billetindex->post_date;
