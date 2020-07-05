@@ -3238,9 +3238,9 @@ h2 {
     background-image: url("../img/heroes2.png"); }
   .argument .heroes--heroes3 {
     right: 0;
-    height: 600px;
+    height: 560px;
     bottom: 0px;
-    width: 800px;
+    width: 720px;
     background-image: url("../img/heroes3.png"); }
 
 .argument3 {
@@ -3328,27 +3328,29 @@ h2 {
     max-width: 400px; }
   /* ARGUMENT 1*/
   .argument .inner-argument--downright {
-    height: 640px;
+    height: 540px;
     padding-top: 0; }
     .argument .inner-argument--downright .heroes {
-      height: 430px;
-      width: 510px; }
+      height: 320px;
+      width: 100%;
+      bottom: 10px; }
   /* ARGUMENT 2*/
   .argument .inner-argument--center {
-    height: 690px;
+    height: 640px;
     padding-top: 30px; }
   .argument .heroes--heroes2 {
-    width: 460px;
-    bottom: 70px;
-    transform: rotate(-6deg);
-    height: 380px; }
+    width: 80%;
+    bottom: 60px;
+    transform: rotate(-7deg);
+    height: 300px; }
   /* ARGUMENT 3*/
   .argument .inner-argument--upright {
-    height: 720px;
+    height: 660px;
     padding-top: 150px; }
   .argument .heroes--heroes3 {
-    height: 400px;
-    width: 400px; }
+    height: 320px;
+    width: 100%;
+    left: 0; }
   /* Presse */
   .presse .imgchronique {
     position: absolute; }
