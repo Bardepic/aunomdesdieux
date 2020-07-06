@@ -3328,7 +3328,7 @@ h2 {
     max-width: 400px; }
   /* ARGUMENT 1*/
   .argument .inner-argument--downright {
-    height: 540px;
+    height: 580px;
     padding-top: 0; }
     .argument .inner-argument--downright .heroes {
       height: 320px;
@@ -3359,7 +3359,13 @@ h2 {
   .presse p {
     margin: 0; }
   .presse .paragraphe {
-    margin-top: 48px; } }
+    margin-top: 48px; }
+  .argument .inner-argument h3 {
+    font-size: 2.1rem; }
+  .argument .inner-argument p {
+    min-width: 260px; }
+  .entertheuniverse h2 {
+    line-height: 2rem; } }
 
 .chroniques {
   padding-top: 30px;
