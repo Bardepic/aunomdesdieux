@@ -312,9 +312,9 @@
    {
      left: 0;
      width: 600px;
-     margin-top: 36px;
+     bottom: 40px;
      transform: rotate(-3deg);
-     height: 500px;
+     height: 380px;
     background-image: url('../img/heroes2.png');
    }
 
@@ -495,7 +495,7 @@
     {
       height: 320px;
       width: 100%;
-      bottom: 10px;
+      bottom: 0;
     }
   }
 
@@ -503,27 +503,27 @@
  .argument 
  { & .inner-argument--center
     {
-      height: 640px;
+      height: 670px;
       padding-top: 30px;
     }
   & .heroes--heroes2
    {
-    width: 80%;
-     bottom: 60px;
-     transform: rotate(-7deg);
-     height: 300px;
+    width: 100%;
+     bottom: 100px;
+     transform: rotate(0deg);
+     height: 220px;
    } 
   }
 /* ARGUMENT 3*/
   .argument 
   { & .inner-argument--upright
      {
-       height: 660px;
-       padding-top: 150px;
+       height: 560px;
+       padding-top: 80px;
      }
    & .heroes--heroes3
     {
-      height: 320px;
+      height: 280px;
       width: 100%;
       left: 0;
 
@@ -557,13 +557,14 @@
     {
       & h3     
       {
-      font-size: 2.1rem;
+      font-size: 1.8rem;
+      line-height: 1.9rem;
 
     }
   
       & p
       {
-        min-width: 260px;
+        width: 100%;
       }
     }
 
@@ -571,6 +572,19 @@
     .entertheuniverse h2 
     {
       line-height: 2rem;
+    }
+
+
+    .argument 
+    {
+      & .inner-argument--downright {
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 95%);
+       }
+    
+    
+       & .inner-argument--upright { 
+        clip-path: polygon(0 5%, 100% 0, 100% 100%, 0 100%);
+       }
     }
 
 }

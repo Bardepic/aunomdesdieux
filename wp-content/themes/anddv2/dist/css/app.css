@@ -3232,9 +3232,9 @@ h2 {
   .argument .heroes--heroes2 {
     left: 0;
     width: 600px;
-    margin-top: 36px;
+    bottom: 40px;
     transform: rotate(-3deg);
-    height: 500px;
+    height: 380px;
     background-image: url("../img/heroes2.png"); }
   .argument .heroes--heroes3 {
     right: 0;
@@ -3333,22 +3333,22 @@ h2 {
     .argument .inner-argument--downright .heroes {
       height: 320px;
       width: 100%;
-      bottom: 10px; }
+      bottom: 0; }
   /* ARGUMENT 2*/
   .argument .inner-argument--center {
-    height: 640px;
+    height: 670px;
     padding-top: 30px; }
   .argument .heroes--heroes2 {
-    width: 80%;
-    bottom: 60px;
-    transform: rotate(-7deg);
-    height: 300px; }
+    width: 100%;
+    bottom: 100px;
+    transform: rotate(0deg);
+    height: 220px; }
   /* ARGUMENT 3*/
   .argument .inner-argument--upright {
-    height: 660px;
-    padding-top: 150px; }
+    height: 560px;
+    padding-top: 80px; }
   .argument .heroes--heroes3 {
-    height: 320px;
+    height: 280px;
     width: 100%;
     left: 0; }
   /* Presse */
@@ -3361,11 +3361,18 @@ h2 {
   .presse .paragraphe {
     margin-top: 48px; }
   .argument .inner-argument h3 {
-    font-size: 2.1rem; }
+    font-size: 1.8rem;
+    line-height: 1.9rem; }
   .argument .inner-argument p {
-    min-width: 260px; }
+    width: 100%; }
   .entertheuniverse h2 {
-    line-height: 2rem; } }
+    line-height: 2rem; }
+  .argument .inner-argument--downright {
+    -webkit-clip-path: polygon(0 0, 100% 0, 100% 100%, 0 95%);
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 0 95%); }
+  .argument .inner-argument--upright {
+    -webkit-clip-path: polygon(0 5%, 100% 0, 100% 100%, 0 100%);
+            clip-path: polygon(0 5%, 100% 0, 100% 100%, 0 100%); } }
 
 .chroniques {
   padding-top: 30px;
