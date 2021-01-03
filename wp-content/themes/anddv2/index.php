@@ -71,7 +71,7 @@
     <div class="container">
     <h3>
     Une trame uchronique</h3>
-      <p>...où la France et d’autres vieilles nations partiront au secours d'un continent Américain asservi par les afres de la corruption et de la guerre</h3>
+      <p>...où la France et d’autres vieilles nations partiront au secours d'un continent Américain asservi par les affres de la corruption et de la guerre</h3>
   
     </div>
   </div>
