@@ -1,6 +1,7 @@
 .footer
 {
   min-height: 250px;
+  text-align: center;
   margin-top: 0;
   width: 100%;
   padding-top: 40px;
@@ -53,4 +54,13 @@
     {
     background-image: url('../img/insta.png');
     }
+}
+
+
+@media (max-width: 749px)
+{
+  .footer 
+  {
+    padding: 0 50px 0 50px;
+  }
 }

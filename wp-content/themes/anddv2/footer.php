@@ -3,10 +3,10 @@
 <div class="container">
   <div class="row">
     <div class="footer">
-      <p class="footer-title">Au nom des dieux - saga fantastique</p>
-      <p>par <b>Gautier Durrieu de Madron</b></p>
+      <img src="<?php echo get_template_directory_uri(); ?>/assets/img/logo.png" style="max-height: 80px; margin-bottom: 30px;" >
+      <p>Une saga fantastique imaginée, écrite et possédée par <b>Gautier Durrieu de Madron</b></p>
       <p>Site internet, visuels & couvertures par <b>Ouriel Lahoussaye</b></p>
-      <p>Maintenance par <a href="http://anthonycyrille.com/"><b>Anthony Cyrille</b></a></p>
+      <p>Maintenance par <a href="http://anthonycyrille.com/"><b>A.Cyrille</b></a></p>
       <p style="font-size: 0.8rem;  margin-top: 15px; line-height: 0.9rem;">Crédits Musique : Scott Buckley</p>
       <p style="font-size: 0.8rem; line-height: 0.9rem;"><a href="https://www.scottbuckley.com.au">Source</a> - <a href="https://creativecommons.org/licenses/by/4.0/deed.fr">Licence</a></p>
 </p>

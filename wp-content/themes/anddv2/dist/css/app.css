@@ -3167,6 +3167,31 @@ h2 {
     display: flex;
     margin-top: 20px; }
 
+.partners {
+  padding-top: 30px;
+  padding-bottom: 30px;
+  background-repeat: no-repeat;
+  background-position: bottom;
+  background-color: #f9f9f9; }
+  .partners h2 {
+    font-size: 1.7rem;
+    margin-bottom: 60px; }
+  .partners p {
+    margin-left: 70px;
+    font-size: 1.4rem; }
+  .partners .presse_content {
+    min-height: 70px;
+    padding-bottom: 20px; }
+  .partners img {
+    height: 100px;
+    opacity: 0.8;
+    transition: all 0.2s; }
+    .partners img:hover {
+      opacity: 0.6; }
+  .partners .chronique-block {
+    display: flex;
+    margin-top: 20px; }
+
 .subscribe {
   position: relative;
   margin: auto;
@@ -3563,6 +3588,7 @@ h2 {
 
 .footer {
   min-height: 250px;
+  text-align: center;
   margin-top: 0;
   width: 100%;
   padding-top: 40px;
@@ -3599,6 +3625,10 @@ h2 {
   .footer .fb-insta {
     background-image: url("../img/insta.png"); }
 
+@media (max-width: 749px) {
+  .footer {
+    padding: 0 50px 0 50px; } }
+
 .book {
   width: 240px;
   margin-bottom: 80px;
@@ -3613,6 +3643,8 @@ h2 {
     background-image: url("../img/livre1.jpg"); }
   .book .couv2 {
     background-image: url("../img/livre2.jpg"); }
+  .book .couv3 {
+    background-image: url("../img/livre3.jpg"); }
   .book p {
     margin-top: 0;
     font-size: 1.1rem; }
@@ -3626,6 +3658,8 @@ h2 {
     text-transform: uppercase; }
   .book p.title--green {
     color: #9aa064; }
+  .book p.title--blue {
+    color: #6477a0; }
   .book p.subtitle {
     color: #999;
     font-size: 1rem;
@@ -3648,13 +3682,24 @@ h2 {
       box-shadow: 1px 1px 15px 2px rgba(0, 0, 0, 0.2); }
   .book .btn--yellow {
     background: #b89454; }
+  .book .btn--yellow2 {
+    background: #a07e43; }
   .book .btn--green {
     background: #9aa064; }
+  .book .btn--green2 {
+    background: #777c49; }
+  .book .btn--blue {
+    background: #6477a0; }
+  .book .btn--blue2 {
+    background: #4f618a; }
 
 @media (max-width: 575.98px) {
+  .flex-xs {
+    flex-wrap: wrap; }
+  .book {
+    width: auto; }
   .book .couv {
-    width: 160px;
-    height: 240px; } }
+    margin: auto; } }
 
 @-webkit-keyframes spin {
   from {

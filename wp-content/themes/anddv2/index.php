@@ -39,7 +39,7 @@
         </div>
     </div>
     <div class="col-lg-5 promo-left">
-        <img src="wp-content/themes/anddv2/assets/img/books"/>
+        <img src="wp-content/themes/anddv2/assets/img/books_3"/>
       </div>
   </div>
 </section>
@@ -123,20 +123,33 @@
 <p style="font-size: 0.9rem; color: #999;line-height: 1.2rem;max-width: 500px; margin: auto;">En cliquant sur valider, vous acceptez de recevoir des informations de la part de l'auteur de la saga Au Nom des Dieux, et comprenez que vous pouvez vous désabonner à tout moment.</p>
 
 
-    <div class="flex" style="justify-content: center; margin-top: 80px;">
+    <div class="flex flex-xs" style="justify-content: center; margin-top: 80px;">
     <div class="book">
       <div class="couv couv1"></div>
       <p class="title">Livre I</p>
-      <p>Destiné Manifeste</p>
+      <p><b>Destiné Manifeste</b></p>
       <p class="subtitle">Tome 1/2 de l'arc <br />De L'Eau et du Sang</p>
       <a class="btn btn--yellow" target="_blank" href="https://www.amazon.fr/Au-nom-Dieux-Destin%C3%A9e-Manifeste/dp/2956831917">Acheter sur Amazon</a>
-    </div>
+      <a class="btn btn--yellow2" target="_blank" href="https://www.kobo.com/fr/fr/ebook/au-nom-des-dieux-de-l-eau-et-du-sang">Acheter sur Kobo</a>
+       
+    </div> 
     <div class="book">
       <div class="couv couv2"></div>
       <p class="title title--green">Livre II</p>
-      <p>Volonté Inébranlable</p>
+      <p><b>Volonté Inébranlable</b></p>
       <p class="subtitle">Tome 2/2 de l'arc <br />De L'Eau et du Sang</p>
       <a class="btn btn--green"  target="_blank" href="https://www.amazon.fr/Au-nom-Dieux-Volonté-inébranlable/dp/2956831925">Acheter sur Amazon</a>
+      <a class="btn btn--green2" target="_blank" href="https://www.kobo.com/fr/fr/ebook/au-nom-des-dieux-de-l-eau-et-du-sang-1">Acheter sur Kobo</a>
+    </div>
+    <div class="book">
+      <div class="couv couv3"></div>
+      <p class="title title--blue">Livre III</p>
+      <p><b>Désirer la ténèbre</b></p>
+      <p>(Peut-être lu séparément des 2 précédents)</p>
+      <p class="subtitle">Tome 1/2 de l'arc <br />Fracture</p>
+      <a class="btn btn--blue"  target="_blank" href="https://www.amazon.fr/Au-nom-Dieux-Fracture-D%C3%A9sirer/dp/2956831941">Acheter sur Amazon</a>
+      <a class="btn btn--blue2"  target="_blank" href="https://www.kobo.com/fr/fr/ebook/fracture-62">Acheter sur Kobo</a>
+  
     </div>
   </div>
   </div>
@@ -145,6 +158,12 @@
   <div class="container">
     <h2>Apparition presse et lectorat</h2>
     <?php include 'presse.php' ?>
+  </div>
+</section>
+<section class="partners">
+  <div class="container">
+    <h2>Partenaires</h2>
+    <?php include 'partners.php' ?>
   </div>
 </section>
 <?php get_footer(); ?>
