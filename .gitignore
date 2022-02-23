@@ -4,3 +4,4 @@ wp-config.php
 .idea
 wp-content/uploads
 wp-content/themes/anddv2/node_modules
+.DS_Store
