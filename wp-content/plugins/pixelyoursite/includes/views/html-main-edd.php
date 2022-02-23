@@ -28,6 +28,22 @@ if ( ! defined( 'ABSPATH' ) ) {
                 <h4 class="switcher-label">Enable EasyDigitalDownloads set-up</h4>
             </div>
         </div>
+        <div class="row">
+            <div class="col">
+                <?php PYS()->render_switcher_input( 'edd_enabled_save_data_to_orders' ,false,true); ?>
+                <h4 class="switcher-label">Save data to orders</h4>
+                <?php renderProBadge(); ?>
+                <small class="form-text">Save the <i>landing page, UTMs, client's browser's time, day, and month, the number of orders, lifetime value, and average order.</i></small>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <?php PYS()->render_switcher_input( 'edd_enabled_save_data_to_user',false,true ); ?>
+                <h4 class="switcher-label">Display data to the user's profile</h4>
+                <?php renderProBadge(); ?>
+                <small class="form-text">Display <i>the number of orders, lifetime value, and average order</i>.</small>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -41,82 +57,11 @@ if ( ! defined( 'ABSPATH' ) ) {
     </div>
 </div>
 
-<!-- Semafors -->
-<div class="card card-static">
-    <div class="card-header">
-        Advanced Data Tracking
-    </div>
-    <div class="card-body">
-        <div class="row">
-            <div class="col-11">
-                <div class="indicator">ON</div>
-                <h4 class="indicator-label">Facebook Dynamic Product Ads</h4>
-            </div>
-            <div class="col-1">
-                <?php renderPopoverButton( 'edd_facebook_am_params' ); ?>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-11">
-                <div class="indicator">ON</div>
-                <h4 class="indicator-label">Facebook & Pinterest parameters</h4>
-            </div>
-            <div class="col-1">
-                <?php renderPopoverButton( 'edd_facebook_and_pinterest_params' ); ?>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-11">
-                <div class="indicator indicator-off">OFF</div>
-                <h4 class="indicator-label">Facebook & Pinterest PRO parameters</h4>
-            </div>
-            <div class="col-1">
-                <?php renderPopoverButton( 'edd_facebook_and_pinterest_pro_params' ); ?>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-11">
-                <div class="indicator">ON</div>
-                <h4 class="indicator-label">Facebook & Pinterest parameters for Purchase event</h4>
-            </div>
-            <div class="col-1">
-                <?php renderPopoverButton( 'edd_facebook_and_pinterest_purchase_params' ); ?>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-11">
-                <div class="indicator indicator-off">OFF</div>
-                <h4 class="indicator-label">Facebook & Pinterest PRO parameters for Purchase event</h4>
-            </div>
-            <div class="col-1">
-                <?php renderPopoverButton( 'edd_facebook_and_pinterest_purchase_pro_params' ); ?>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-11">
-                <div class="indicator">ON</div>
-                <h4 class="indicator-label">Google Analytics Enhanced Ecommerce</h4>
-            </div>
-            <div class="col-1">
-                <?php renderPopoverButton( 'edd_ga_enhanced_ecommerce_params' ); ?>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-11">
-                <div class="indicator indicator-off">OFF</div>
-                <h4 class="indicator-label">Google Ads Tag with Dynamic Remarketing Support</h4>
-            </div>
-            <div class="col-1">
-                <?php renderPopoverButton( 'edd_google_ads_enhanced_ecommerce_params' ); ?>
-            </div>
-        </div>
-    </div>
-</div>
 
 <!-- AddToCart -->
-<div class="card card-static">
+<div class="card">
     <div class="card-header">
-        How to capture Add To Cart action
+        When to fire the add to cart event<?php cardCollapseBtn(); ?>
     </div>
     <div class="card-body">
         <div class="row">
@@ -130,12 +75,14 @@ if ( ! defined( 'ABSPATH' ) ) {
     </div>
 </div>
 
+<h2 class="section-title">ID Settings</h2>
+
 <?php if ( Facebook()->enabled() ) : ?>
     
     <!-- Facebook ID -->
-    <div class="card card-static">
+    <div class="card">
         <div class="card-header">
-            Facebook ID setting
+            Facebook ID setting<?php cardCollapseBtn(); ?>
         </div>
         <div class="card-body">
             <div class="row mb-3">
@@ -166,9 +113,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <?php if ( GA()->enabled() ) : ?>
 
-    <div class="card card-static" id="pys-section-ga-id">
+    <div class="card" id="pys-section-ga-id">
         <div class="card-header">
-            Google Analytics ID setting
+            Google Analytics ID setting<?php cardCollapseBtn(); ?>
         </div>
         <div class="card-body">
             <div class="row mb-3">
@@ -209,9 +156,9 @@ e&utm_campaign=pro-feature' ); ?>
 
 <?php if ( Pinterest()->enabled() ) : ?>
 
-    <div class="card card-static" id="pys-section-ga-id">
+    <div class="card" id="pys-section-ga-id">
         <div class="card-header">
-            Pinterest Tag ID setting
+            Pinterest Tag ID setting<?php cardCollapseBtn(); ?>
         </div>
         <div class="card-body">
 
@@ -245,15 +192,15 @@ e&utm_campaign=pro-feature' ); ?>
         <div class="card-header">
             Pinterest Tag ID setting
             <?php renderProBadge("https://www.pixelyoursite.com/pinterest-tag?utm_source=pys-free-plugin&utm_medium=pinterest-badge&utm_campaign=requiere-free-add-on",
-            "Requires free add-on"); ?>
+            "Requires paid add-on"); ?>
         </div>
     </div>
 <?php endif; ?>
 
 <?php if ( Bing()->enabled() ) : ?>
-    <div class="card card-static">
+    <div class="card">
         <div class="card-header">
-            Bing ID setting
+            Bing ID setting<?php cardCollapseBtn(); ?>
         </div>
         <div class="card-body">
             <div class="row mb-3">
@@ -290,11 +237,11 @@ e&utm_campaign=pro-feature' ); ?>
         </div>
     </div>
 <?php endif; ?>
-
+<hr>
 <!-- Google Dynamic Remarketing Vertical -->
-<div class="card card-static card-disabled">
+<div class="card  card-disabled">
     <div class="card-header">
-        Google Dynamic Remarketing Vertical <?php renderProBadge( 'https://www.pixelyoursite.com/google-analytics' ); ?>
+        Google Dynamic Remarketing Vertical <?php renderProBadge( 'https://www.pixelyoursite.com/google-analytics' ); ?> <?php cardCollapseBtn(); ?>
     </div>
     <div class="card-body">
         <div class="row">
@@ -312,9 +259,9 @@ e&utm_campaign=pro-feature' ); ?>
 </div>
 
 <!-- Event Value -->
-<div class="card card-static card-disabled">
+<div class="card  card-disabled">
     <div class="card-header">
-        Event Value Settings <?php renderProBadge(); ?>
+        Event Value Settings <?php renderProBadge(); ?> <?php cardCollapseBtn(); ?>
     </div>
     <div class="card-body">
         <div class="row mb-3">
@@ -338,17 +285,17 @@ e&utm_campaign=pro-feature' ); ?>
         </div>
     </div>
 </div>
+<hr>
 
-<h2 class="section-title">Default E-Commerce events</h2>
 
 <!-- Purchase -->
 <div class="card">
-    <div class="card-header">
-        Track Purchases <?php cardCollapseBtn(); ?>
+    <div class="card-header has_switch">
+        <?php PYS()->render_switcher_input('edd_purchase_enabled');?>Track Purchases <?php cardCollapseBtn(); ?>
     </div>
     <div class="card-body">
 
-        <div class="row mb-3">
+        <div class="row mb-1">
             <div class="col-11">
                 <?php renderDummyCheckbox( 'Fire the event on transaction only', true ); ?>
             </div>
@@ -356,7 +303,11 @@ e&utm_campaign=pro-feature' ); ?>
                 <?php renderPopoverButton( 'edd_purchase_on_transaction' ); ?>
             </div>
         </div>
-        
+        <div class="row mb-3">
+            <div class="col-12">
+                <?php renderDummyCheckbox( "Don't fire the event for 0 value transactions", true ); ?>
+            </div>
+        </div>
         <?php if ( Facebook()->enabled() ) : ?>
             <div class="row">
                 <div class="col">
@@ -454,8 +405,8 @@ e&utm_campaign=pro-feature' ); ?>
 
 <!-- InitiateCheckout -->
 <div class="card">
-    <div class="card-header">
-        Track the Checkout Page <?php cardCollapseBtn(); ?>
+    <div class="card-header has_switch">
+        <?php PYS()->render_switcher_input('edd_initiate_checkout_enabled');?>Track the Checkout Page <?php cardCollapseBtn(); ?>
     </div>
     <div class="card-body">
         
@@ -547,72 +498,10 @@ e&utm_campaign=pro-feature' ); ?>
     </div>
 </div>
 
-<!-- RemoveFromCart -->
-<div class="card">
-    <div class="card-header">
-        Track remove from cart <?php cardCollapseBtn(); ?>
-    </div>
-    <div class="card-body">
-        
-        <?php if ( Facebook()->enabled() ) : ?>
-            <div class="row">
-                <div class="col">
-                    <?php Facebook()->render_switcher_input( 'edd_remove_from_cart_enabled' ); ?>
-                    <h4 class="switcher-label">Enable the RemoveFromCart event on Facebook</h4>
-                </div>
-            </div>
-        <?php endif; ?>
-        
-        <?php if ( GA()->enabled() ) : ?>
-            <div class="row mb-1">
-                <div class="col">
-                    <?php GA()->render_switcher_input( 'edd_remove_from_cart_enabled' ); ?>
-                    <h4 class="switcher-label">Enable the remove_from_cart event on Google Analytics</h4>
-                </div>
-            </div>
-            <div class="row mb-2">
-                <div class="col col-offset-left">
-                    <?php GA()->render_checkbox_input( 'edd_remove_from_cart_non_interactive',
-                        'Non-interactive event' ); ?>
-                </div>
-            </div>
-        <?php endif; ?>
-
-        <div class="row">
-            <div class="col">
-                <?php renderDummySwitcher(); ?>
-                <h4 class="switcher-label">Enable the remove_from_cart event on Google Ads</h4>
-                <?php renderProBadge('https://www.pixelyoursite.com/google-ads-tag/?utm_source=pys-free-plugin&utm_medium=pro-badge&utm_campaign=pro-feature'); ?>
-            </div>
-        </div>
-        
-        <?php if ( Pinterest()->enabled() ) : ?>
-            <div class="row">
-                <div class="col">
-                    <?php Pinterest()->render_switcher_input( 'edd_remove_from_cart_enabled' ); ?>
-                    <h4 class="switcher-label">Enable the RemoveFromCart event on Pinterest</h4>
-                    <?php Pinterest()->renderAddonNotice(); ?>
-                </div>
-            </div>
-        <?php endif; ?>
-
-<!--        --><?php //if ( Bing()->enabled() ) : ?>
-<!--            <div class="row">-->
-<!--                <div class="col">-->
-<!--                    --><?php //Bing()->render_switcher_input( 'edd_remove_from_cart_enabled' ); ?>
-<!--                    <h4 class="switcher-label">Enable the RemoveFromCart event on Bing</h4>-->
-<!--                    --><?php //Bing()->renderAddonNotice(); ?>
-<!--                </div>-->
-<!--            </div>-->
-<!--        --><?php //endif; ?>
-
-    </div>
-</div>
-
 <!-- AddToCart -->
 <div class="card">
-    <div class="card-header">
-        Track add to cart <?php cardCollapseBtn(); ?>
+    <div class="card-header has_switch">
+        <?php PYS()->render_switcher_input('edd_add_to_cart_enabled');?>Track add to cart <?php cardCollapseBtn(); ?>
     </div>
     <div class="card-body">
         
@@ -706,8 +595,8 @@ e&utm_campaign=pro-feature' ); ?>
 
 <!-- ViewContent -->
 <div class="card">
-    <div class="card-header">
-        Track product pages <?php cardCollapseBtn(); ?>
+    <div class="card-header has_switch">
+        <?php PYS()->render_switcher_input('edd_view_content_enabled');?>Track product pages <?php cardCollapseBtn(); ?>
     </div>
     <div class="card-body">
         
@@ -808,8 +697,8 @@ e&utm_campaign=pro-feature' ); ?>
 
 <!-- ViewCategory -->
 <div class="card">
-    <div class="card-header">
-        Track product category pages <?php cardCollapseBtn(); ?>
+    <div class="card-header has_switch">
+        <?php PYS()->render_switcher_input('edd_view_category_enabled');?>Track product category pages <?php cardCollapseBtn(); ?>
     </div>
     <div class="card-body">
         
@@ -1037,6 +926,146 @@ e&utm_campaign=pro-feature' ); ?>
             <div class="col col-offset-left form-inline">
                 <label>Fire this event when the client has LTV at least</label>
                 <?php renderDummyTextInput( 500 ); ?>
+            </div>
+        </div>
+    </div>
+</div>
+<hr>
+<!-- RemoveFromCart -->
+<div class="card">
+    <div class="card-header has_switch">
+        <?php PYS()->render_switcher_input('edd_remove_from_cart_enabled');?>Track remove from cart <?php cardCollapseBtn(); ?>
+    </div>
+    <div class="card-body">
+
+        <?php if ( Facebook()->enabled() ) : ?>
+            <div class="row">
+                <div class="col">
+                    <?php Facebook()->render_switcher_input( 'edd_remove_from_cart_enabled' ); ?>
+                    <h4 class="switcher-label">Enable the RemoveFromCart event on Facebook</h4>
+                </div>
+            </div>
+        <?php endif; ?>
+
+        <?php if ( GA()->enabled() ) : ?>
+            <div class="row mb-1">
+                <div class="col">
+                    <?php GA()->render_switcher_input( 'edd_remove_from_cart_enabled' ); ?>
+                    <h4 class="switcher-label">Enable the remove_from_cart event on Google Analytics</h4>
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col col-offset-left">
+                    <?php GA()->render_checkbox_input( 'edd_remove_from_cart_non_interactive',
+                        'Non-interactive event' ); ?>
+                </div>
+            </div>
+        <?php endif; ?>
+
+        <div class="row">
+            <div class="col">
+                <?php renderDummySwitcher(); ?>
+                <h4 class="switcher-label">Enable the remove_from_cart event on Google Ads</h4>
+                <?php renderProBadge('https://www.pixelyoursite.com/google-ads-tag/?utm_source=pys-free-plugin&utm_medium=pro-badge&utm_campaign=pro-feature'); ?>
+            </div>
+        </div>
+
+        <?php if ( Pinterest()->enabled() ) : ?>
+            <div class="row">
+                <div class="col">
+                    <?php Pinterest()->render_switcher_input( 'edd_remove_from_cart_enabled' ); ?>
+                    <h4 class="switcher-label">Enable the RemoveFromCart event on Pinterest</h4>
+                    <?php Pinterest()->renderAddonNotice(); ?>
+                </div>
+            </div>
+        <?php endif; ?>
+
+        <!--        --><?php //if ( Bing()->enabled() ) : ?>
+        <!--            <div class="row">-->
+        <!--                <div class="col">-->
+        <!--                    --><?php //Bing()->render_switcher_input( 'edd_remove_from_cart_enabled' ); ?>
+        <!--                    <h4 class="switcher-label">Enable the RemoveFromCart event on Bing</h4>-->
+        <!--                    --><?php //Bing()->renderAddonNotice(); ?>
+        <!--                </div>-->
+        <!--            </div>-->
+        <!--        --><?php //endif; ?>
+
+    </div>
+</div>
+
+<!-- About EDD Events Parameters -->
+<div class="card card-static">
+    <div class="card-header">
+        About EDD Events Parameters
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col">
+                <p>All events get the following parameters for all the tags: <i>page_title, post_type, post_id, event_URL, user_role, plugin, landing_page (pro), event_time (pro), event_day (pro), event_month (pro), traffic_source (pro), UTMs (pro).</i></p>
+                <p>The Purchase event will have the following extra-parameters: <i>category_name, num_items, tags, total (pro), transactions_count (pro), tax (pro), predicted_ltv (pro), average_order (pro), coupon_used (pro), coupon_code (pro), shipping (pro), shipping_cost (pro).</i></p>
+                <p>The Meta Pixel (formerly Facebook Pixel) events are Dynamic Ads ready.</p>
+                <p>The Google Analytics events track the data Enhanced Ecommerce or Monetization (GA4).</p>
+                <p>The Pinterest events have the required data for Dynamic Remarketing.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Control the EDD Parameters -->
+<div class="card">
+    <div class="card-header">
+        Control the EDD Parameters <?php cardCollapseBtn(); ?>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col">
+                You can use these parameters to create audiences, custom conversions, or goals. We recommend keeping them active. If you get privacy warnings about some of these parameters, you can turn them OFF.
+                <hr>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <?php PYS()->render_switcher_input( 'enable_edd_category_name_param' ); ?>
+                <h4 class="switcher-label">category_name</h4>
+                <hr>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <?php PYS()->render_switcher_input( 'enable_edd_num_items_param' ); ?>
+                <h4 class="switcher-label">num_items</h4>
+                <hr>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <?php PYS()->render_switcher_input( 'enable_edd_product_price_param' ); ?>
+                <h4 class="switcher-label">product_price</h4>
+                <hr>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <?php renderDummySwitcher( true ); ?>
+                <h4 class="switcher-label">content_ids (mandatory for DPA)</h4>
+                <hr>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <?php renderDummySwitcher( true ); ?>
+                <h4 class="switcher-label">content_type (mandatory for DPA)</h4>
+                <hr>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <?php renderDummySwitcher( true ); ?>
+                <h4 class="switcher-label">value (mandatory for purchase, you have more options on event level)</h4>
+                <hr>
             </div>
         </div>
     </div>

@@ -1,9 +1,10 @@
 === Plugin Name ===
 Contributors: nomadcoder, seancjones
-Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=FTBD2UDXFJDB6
+Donate link: https://www.paypal.com/paypalme/nomadnewyork
 Tags: Guest Author Name, Override Author Name, Author
 Requires at least: 4.1
-Tested up to: 5.2.2
+Tested up to: 5.8
+Stable Tag: 4.32
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -11,25 +12,37 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Create a post and override the author name with one or more names or text. You can also create a link for the author name field
 
 == Description ==
-Version 3.99
+Version 4.32
+
+Free
+
+ Quickly and easily add a guest author to a post and link to the authors blog
+ Display guest author name in posts
+ Link author avatar
+ Quick Edit
+
+Create a post and override the author name with one or more names or text. You can also create a link for the author name field, add a description and an email address for the gravatar.
 
 Premium
+Sorry, we do not have the resources to manage sales and support right now. Our premium plugin should be available again in July 2020.
 
 Additional Features:
 1) Re-use & save guest authors
 2) Upload guest author image
-3) List posts written by guest authors as though they were authors
+3) Guest author archives
 4) Bulk edit guest authors in posts
 5) Add guest authors to custom posts and pages
 6) Easy Conversion process from our free version
 7) Still supports gravatar and custom urls
 8) Author list & Grid shortcodes
+9) Supports Custom posts and author in searches
+10) Elementor author archives
+11) Author box
+12) Filter posts by guest author
+13) Now with multiple byline authors (coauthors)!
+14) Now with shortcodes for author name, author link and author avatar
 
 
-
-Create a post and override the author name with one or more names or text. You can also create a link for the author name field, add a description and an email address for the gravatar.
-
-You may now enable quickedit for the Guest Author Name plugin. Go to the settings menu and select ‘Guest Author Name’ to enable or disable quick edit.
 
 For quicker support, please visit the <a href="http://www.shooflysolutions.com/software/guest-author-name/">plugin page on the Shoofly Solutions web page</a>.
 
@@ -67,12 +80,13 @@ Click on the "Install Now" button to install the plugin. Once the plugin is inst
 
 = How can I stop Guest Author posts from showing up on my posts feed?
 
-Our premium version handles this seamlessly.
+As of 4.0, your guest author posts should no longer show up on your posts feed. If you still have this issue:
 
 While the author link ideally should go to the authors web page, your guest author posts will show up as one of your posts. You can get around the list problem by creating a new user called Guest Author. Create your guest author posts under this user or use an author switch plugin to change the registered author. That way, guest author posts will show up under the user "Guest Authors" instead of your account.
 
 Please visit the FAQ page on our site at <a href="http://www.shooflysolutions.com/faq/">http://www.shooflysolutions.com/faq/</a>
 
+Our premium version handles this seamlessly.
 
 = This plugin used to substitute Title Name with Author Name when using Jetpack Publicize. How do I get it back?
 
@@ -97,6 +111,35 @@ This was a bug, but if you were using it as a feature, then you can use this cod
 2. Post with Guest Author
 3. Settings Page
 == Changelog ==
+= 4.32 =
+Fix avatar image for commente
+Keep existing avatar url structure (should fix amp image width issue)
+= 4.31 =
+Update for AMP
+Fix avatar image size
+Move inline script to external script
+= 4.30 =
+Add code to disable guest author in comment section on posts
+Add code to open guest author link in a new window
+= 4.25 =
+Add automerge
+= 4.20 =
+Update
+= 4.12 =
+Update notices, update readme description
+= 4.11 =
+= Attempt to fix Yoast canonical in paged archive/blog when a guest author is the first author in the list.
+= Correct wording in settings =
+= 4.10 =
+= Fix errors saving post in guttenberg editor =
+= 4.03 =
+= Fix 4.0 beta to handle empty values
+= 4.02 =
+= Change in 4.00 is now beta +
+= 4.01 =
+= Beta version to test change in 4.00
+= 4.00 =
+= Filter guest authors out of author archive  =
 = 3.99 =
 = Fix for abspath warning message =
 = 3.98

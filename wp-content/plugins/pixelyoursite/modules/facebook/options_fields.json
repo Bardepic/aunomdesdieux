@@ -49,6 +49,7 @@
   "fdp_purchase_value" : "text",
 
   "use_server_api": "checkbox",
+  "server_event_use_ajax": "checkbox",
   "server_access_api_token": "array",
   "test_api_event_code": "array",
 
@@ -59,5 +60,8 @@
   "woo_complete_registration_use_custom_value": "checkbox",
   "woo_complete_registration_custom_value": "radio",
   "woo_complete_registration_custom_value_old": "radio",
-  "woo_complete_registration_send_from_server": "checkbox"
+  "woo_complete_registration_send_from_server": "checkbox",
+
+  "signal_events_enabled": "checkbox",
+  "verify_meta_tag": "array_textarea"
 }

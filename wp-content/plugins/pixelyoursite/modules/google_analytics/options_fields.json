@@ -1,5 +1,6 @@
 {
   "enabled": "checkbox",
+  "is_enable_debug_mode": "array",
   "tracking_id": "array",
   "enhance_link_attribution": "checkbox",
   "anonimize_ip": "checkbox",
@@ -50,5 +51,10 @@
   "edd_view_content_enabled": "checkbox",
   "edd_view_content_non_interactive": "checkbox",
   "edd_view_category_enabled": "checkbox",
-  "edd_view_category_non_interactive": "checkbox"
+  "edd_view_category_non_interactive": "checkbox",
+
+  "disable_advertising_features": "checkbox",
+  "disable_advertising_personalization": "checkbox",
+
+  "signal_events_enabled": "checkbox"
 }

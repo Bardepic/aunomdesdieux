@@ -396,6 +396,8 @@ abstract class Settings {
         
         if ( $disabled ) {
 	        $classes[] = 'disabled';
+            $attr_name = "";
+            $attr_value = false;
         }
         
         $classes = implode( ' ', $classes );
@@ -486,11 +488,11 @@ abstract class Settings {
 	/**
 	 * Output number input
 	 *
-	 * @param      $key
-	 * @param null $placeholder
+	 * @param  string    $key
+	 * @param string $placeholder
 	 * @param bool $disabled
 	 */
-	public function render_number_input( $key, $placeholder = null, $disabled = false ) {
+	public function render_number_input( $key, $placeholder = '', $disabled = false ) {
 
 		$attr_name  = "pys[$this->slug][$key]";
 		$attr_id    = 'pys_' . $this->slug . '_' . $key;
@@ -750,5 +752,51 @@ abstract class Settings {
 		return $sanitized;
 		
 	}
+
+/**
+* Sanitize array field value
+*
+* @param $values
+*
+* @return array
+*/
+    public function sanitize_array_textarea_field( $values ) {
+
+        $values = is_array( $values ) ? $values : array();
+        $sanitized = array();
+
+        foreach ( $values as $key => $value ) {
+
+            $new_value = $this->sanitize_textarea_field( $value );
+
+            if ( ! empty( $new_value ) && ! in_array( $new_value, $sanitized ) ) {
+                $sanitized[ $key ] = $new_value;
+            }
+
+        }
+
+        return $sanitized;
+    }
+
+    public function render_checkbox_input_array( $key, $label, $index = 0, $disabled = false ) {
+
+        $attr_name  = "pys[$this->slug][$key][]";
+        $attr_values = (array)$this->getOption( $key );
+        $value = "index_".$index;
+        $valueIndex = array_search($value,$attr_values);
+
+        ?>
+
+        <label class="custom-control custom-checkbox">
+            <input type="checkbox" name="<?php esc_attr_e( $attr_name ); ?>" value="<?=$value?>"
+                   class="custom-control-input" <?php disabled( $disabled, true ); ?>
+                <?=$valueIndex !== false ? "checked" : "" ?>>
+            <span class="custom-control-indicator"></span>
+            <span class="custom-control-description"><?php echo wp_kses_post( $label ); ?></span>
+        </label>
+
+        <?php
+
+    }
 	
 }

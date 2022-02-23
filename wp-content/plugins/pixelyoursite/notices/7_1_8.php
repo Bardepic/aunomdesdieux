@@ -14,7 +14,13 @@ function adminGetPromoNoticesContent() {
               'disabled' => false,
             //  'from'     => 1,
             //  'to'       => 2,
-              'content'  => '</br>PixelYourSite & WooCommerce: track both PROFIT and TOTAL for your Facebook Ads: <a href="https://www.pixelyoursite.com/cost-of-goods-purchase-and-completeregistration" target="_blank">LEARN HOW</a></br></br>'
+              'content'  => '</br>PIXELYOURSITE KEY INFO:</br></br>Learn about Facebook Aggregated Event Measurement: <a href="https://www.pixelyoursite.com/aem" target="_blank">Click here</a>
+</br></br>
+How to verify your domain on Facebook: <a href="https://www.pixelyoursite.com/verify-domain-facebook" target="_blank">Click here</a>
+</br></br>
+Find out about Custom Conversion using the Signal event: <a href="https://www.pixelyoursite.com/signal-custom-conversions-aem" target="_blank">Click here</a>
+</br></br>
+Add the TikTok Tag with <a href="https://www.pixelyoursite.com/tiktok-tag-pixelyoursite" target="_blank">PixelYourSite Professional</a>.'
           ],
 
 
@@ -25,7 +31,13 @@ function adminGetPromoNoticesContent() {
               'disabled' => false,
             //  'from'     => 0,
             //  'to'       => 1,
-             'content'  => '</br>PixelYourSite: Learn how to do Facebook Dynamic Ads for NORMAL WordPress posts: <a href="https://www.pixelyoursite.com/facebook-dynamic-product-ads-for-wordpress" target="_blank">CLICK HERE</a></br></br>'
+             'content'  => '</br>PIXELYOURSITE KEY INFO:</br></br>Learn about Facebook Aggregated Event Measurement: <a href="https://www.pixelyoursite.com/aem" target="_blank">Click here</a>
+</br></br>
+How to verify your domain on Facebook: <a href="https://www.pixelyoursite.com/verify-domain-facebook" target="_blank">Click here</a>
+</br></br>
+Find out about Custom Conversion using the Signal event: <a href="https://www.pixelyoursite.com/signal-custom-conversions-aem" target="_blank">Click here</a>
+</br></br>
+Add the TikTok Tag with <a href="https://www.pixelyoursite.com/tiktok-tag-pixelyoursite" target="_blank">PixelYourSite Professional</a>.'
           ],
 
         ],
@@ -35,7 +47,11 @@ function adminGetPromoNoticesContent() {
               'disabled' => false,
           //    'from'     => 0,
           //    'to'       => 1,
-              'content'  => '</br>PixelYourSite: Learn how to do Facebook Dynamic Ads for NORMAL WordPress posts: <a href="https://www.pixelyoursite.com/facebook-dynamic-product-ads-for-wordpress" target="_blank">CLICK HERE</a></br></br>'
+              'content'  => '</br>PIXELYOURSITE KEY INFO:</br></br>Learn about Facebook Aggregated Event Measurement: <a href="https://www.pixelyoursite.com/aem" target="_blank">Click here</a>
+</br></br>
+How to verify your domain on Facebook: <a href="https://www.pixelyoursite.com/verify-domain-facebook" target="_blank">Click here</a>
+</br></br>
+Find out about Custom Conversion using the Signal event: <a href="https://www.pixelyoursite.com/signal-custom-conversions-aem" target="_blank">Click here</a></br></br>'
           ],
 
         ],

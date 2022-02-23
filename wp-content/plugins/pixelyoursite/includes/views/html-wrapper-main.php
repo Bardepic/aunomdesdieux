@@ -39,6 +39,9 @@ include "html-popovers.php";
 
                                 $classes = implode( ' ', $classes );
 
+                                if(isset($tab_data['class']) ) {
+                                    $classes .= ' '.$tab_data['class'];
+                                }
                                 ?>
 
                                 <a class="<?php esc_attr_e( $classes ); ?>"
@@ -76,6 +79,9 @@ include "html-popovers.php";
                             case 'edd':
                                 include "html-main-edd.php";
                                 break;
+                            case 'wcf':
+                                include "html-main-wcf.php";
+                                break;
 
                             case 'head_footer':
                                 /** @noinspection PhpIncludeInspection */
@@ -104,7 +110,9 @@ include "html-popovers.php";
                             case 'reset_settings':
                                 include "html-reset.php";
                                 break;
-
+                            case 'logs':
+                                include "html-logs.php";
+                                break;
                             default:
                                 do_action( 'pys_admin_' . getCurrentAdminTab() );
                         }
@@ -158,12 +166,15 @@ include "html-popovers.php";
                             <a class="nav-item nav-link" href="https://www.pixelyoursite.com/video?utm_source=pixelyoursite-free-plugin&utm_medium=plugin&utm_campaign=free-plugin-right-menu"
                                target="_blank" style="font-weight: bold;">VIDEO TIPS</a>
 
+                            <a href="<?php echo esc_url( buildAdminUrl( 'pixelyoursite', 'logs' ) ); ?>"
+                               class="nav-item nav-link">Logs</a>
+
                         </nav>
 
                         <div class="card card-static card-primary">
                             <div class="card-body">
-                                <h4 class="card-title">Facebook Pixel Essential Guide</h4>
-                                <p class="card-text">Learn how to use Facebook Pixel like a genuine expert. Download this Facebook
+                                <h4 class="card-title">Meta Pixel (formerly Facebook Pixel) Essential Guide</h4>
+                                <p class="card-text">Learn how to use Meta Pixel (formerly Facebook Pixel) like a genuine expert. Download this Facebook
                                     Pixel Essential Guide:</p>
                                 <a href="https://www.pixelyoursite.com/facebook-pixel-pdf-guide?utm_source=pixelyoursite-free-plugin&utm_medium=plugin&utm_campaign=free-plugin-facebook-guide" target="_blank" class="btn btn-sm btn-block btn-save">Click to get the free
                                     guide</a>

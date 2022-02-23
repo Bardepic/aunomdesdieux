@@ -9,6 +9,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 
+function isWcfActive() {
+    return function_exists('wcf');
+}
 
 function isPinterestActive( $checkCompatibility = true ) {
 	
@@ -24,6 +27,17 @@ function isPinterestActive( $checkCompatibility = true ) {
 		return $active;
 	}
 	
+}
+
+function getUserRoles() {
+    $user = wp_get_current_user();
+
+    if ( $user->ID !== 0 ) {
+        $user_roles = implode( ',', $user->roles );
+    } else {
+        $user_roles = 'guest';
+    }
+    return $user_roles;
 }
 
 function isPinterestVersionIncompatible() {
@@ -161,6 +175,20 @@ function isSmartOpenGraphActive() {
 }
 
 /**
+ * Check if WPML plugin installed and activated.
+ *
+ * @return bool
+ */
+function isWPMLActive() {
+
+    if ( ! function_exists( 'is_plugin_active' ) ) {
+        include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+    }
+
+    return is_plugin_active( 'sitepress-multilingual-cms/sitepress.php' );
+}
+
+/**
  * Clean variables using sanitize_text_field. Arrays are cleaned recursively.
  * Non-scalar values are ignored.
  *
@@ -191,163 +219,181 @@ function getAvailableUserRoles() {
 
 }
 
-function getAvailableProductCog($product_id) {
+function getAvailableProductCog($product) {
 
-	$parent_id  = wp_get_post_parent_id( $product_id );
-	$cog_product_val = get_post_meta( $product_id, '_pixel_cost_of_goods_cost_val', true );
-	$cog_term_val = get_product_cost_by_cat( $product_id );
-	if (($parent_id > 0) && $cog_product_val == '') {
-		$cog_product_val = get_post_meta( $parent_id, '_pixel_cost_of_goods_cost_val', true );
-	}
-	if ($cog_product_val) {
-		$cog = array(
-			'type' => get_post_meta( $product_id, '_pixel_cost_of_goods_cost_type', true ),
-			'val' => $cog_product_val
-		);
-	} elseif ($cog_term_val) {
-		$cog = array(
-			'type' => get_product_type_by_cat( $product_id ),
-			'val' => $cog_term_val
-		);
-	} else {
-		$cog = array(
-			'type' => get_option( '_pixel_cost_of_goods_cost_type'),
-			'val' => get_option( '_pixel_cost_of_goods_cost_val')
-		);
-	}
+    $cost_type = get_post_meta( $product->get_id(), '_pixel_cost_of_goods_cost_type', true );
+    $product_cost = get_post_meta( $product->get_id(), '_pixel_cost_of_goods_cost_val', true );
 
-	return $cog;
+    if(!$product_cost && $product->is_type("variation")) {
+        $cost_type = get_post_meta( $product->get_parent_id(), '_pixel_cost_of_goods_cost_type', true );
+        $product_cost = get_post_meta( $product->get_parent_id(), '_pixel_cost_of_goods_cost_val', true );
+    }
 
-}
 
-function getAvailableProductCogOrder($order_id) {
-	$order = wc_get_order( $order_id );
-	$orderData = $order->get_data();
-	$order_shipping_total = $orderData['shipping_total'];
-	$order_total = $order->get_total();
-	$cost = 0;
-	$notice = '';
-	$custom_total = 0;
-	$cat_isset = 0;
-	foreach ( $order->get_items() as $item_id => $item ) {
-		$parent_id = false;
-		if (isset( $item['variation_id'] ) && 0 != $item['variation_id']) {
-			$parent_id = $item['product_id'];
-		}
-		$product_id = ( isset( $item['variation_id'] ) && 0 != $item['variation_id'] ? $item['variation_id'] : $item['product_id'] );
-		$cost_type = get_post_meta( $product_id, '_pixel_cost_of_goods_cost_type', true );
-		$product_cost = get_post_meta( $product_id, '_pixel_cost_of_goods_cost_val', true );
-		if ($parent_id && $product_cost == '') {
-			$product_cost = get_post_meta( $parent_id, '_pixel_cost_of_goods_cost_val', true );
-		}
-		$price = get_post_meta($product_id, '_regular_price', true);
-		$qlt = $item['quantity'];
-		if ($product_cost) {
-			$cost = ($cost_type == 'percent') ? $cost + ($price * ($product_cost / 100) * $qlt) : $cost + ($product_cost * $qlt);
-			$custom_total = $custom_total + ($price * $qlt);
-		} else {
-			$product_cost = get_product_cost_by_cat( $product_id );
-			$cost_type = get_product_type_by_cat( $product_id );
-			if ($product_cost) {
-				$cost = ($cost_type == 'percent') ? $cost + ($price * ($product_cost / 100) * $qlt) : $cost + ($product_cost * $qlt);
-				$custom_total = $custom_total + ($price * $qlt);
-				$notice = "Category Cost of Goods was used for some products.";
-				$cat_isset = 1;
-			} else {
-				$product_cost = get_option( '_pixel_cost_of_goods_cost_val');
-				$cost_type = get_option( '_pixel_cost_of_goods_cost_type' );
-				if ($product_cost) {
-					$cost = ($cost_type == 'percent') ? (float) $cost + ((float) $price * ((float) $product_cost / 100) * $qlt) : (float) $cost + ((float) $product_cost * $qlt);
-					$custom_total = $custom_total + ($price * $qlt);
-					if ($cat_isset == 1) {
-						$notice = "Global and Category Cost of Goods was used for some products.";
-					} else {
-						$notice = "Global Cost of Goods was used for some products.";
-					}
-				} else {
-					$notice = "Some products don't have Cost of Goods.";
-				}
-			}
-		}
-	}
-	if (($order_total - $cost - $order_shipping_total) > 0) {
-		$profit = $order_total - $cost - $order_shipping_total;
-	} else {
-		$profit = '';
-	}
-	if ('' !== $notice) {
-		if (($custom_total - $cost) > 0) {
-			$profit = $custom_total - $cost;
-		} else {
-			$profit = '';
-		}
-	}
+    if ($product_cost) {
+        $cog = array(
+            'type' => $cost_type,
+            'val' => $product_cost
+        );
+    } else {
+        $cog_term_val = get_product_cost_by_cat( $product->get_id() );
+        if ($cog_term_val) {
+            $cog = array(
+                'type' => get_product_type_by_cat( $product->get_id() ),
+                'val' => $cog_term_val
+            );
+        } else {
+            $cog = array(
+                'type' => get_option( '_pixel_cost_of_goods_cost_type'),
+                'val' => get_option( '_pixel_cost_of_goods_cost_val')
+            );
+        }
+    }
 
-	return $profit;
+    return $cog;
 
 }
 
-function getAvailableProductCogCart($amount) {
-	$cart_total = $amount;
-	$cost = 0;
-	$notice = '';
-	$custom_total = 0;
-	$cat_isset = 0;
-	foreach ( WC()->cart->cart_contents as $cart_item_key => $item ) {
-		$parent_id = false;
-		if (isset( $item['variation_id'] ) && 0 != $item['variation_id']) {
-			$parent_id = $item['product_id'];
-		}
-		$product_id = ( isset( $item['variation_id'] ) && 0 != $item['variation_id'] ? $item['variation_id'] : $item['product_id'] );
-		$cost_type = get_post_meta( $product_id, '_pixel_cost_of_goods_cost_type', true );
-		$product_cost = get_post_meta( $product_id, '_pixel_cost_of_goods_cost_val', true );
-		if ($parent_id && $product_cost == '') {
-			$product_cost = get_post_meta( $parent_id, '_pixel_cost_of_goods_cost_val', true );
-		}
-		$price = get_post_meta($product_id, '_regular_price', true);
-		$qlt = $item['quantity'];
-		if ($product_cost) {
-			$cost = ($cost_type == 'percent') ? $cost + ($price * ($product_cost / 100) * $qlt) : $cost + ($product_cost * $qlt);
-			$custom_total = $custom_total + ($price * $qlt);
-		} else {
-			$product_cost = get_product_cost_by_cat( $product_id );
-			$cost_type = get_product_type_by_cat( $product_id );
-			if ($product_cost) {
-				$cost = ($cost_type == 'percent') ? $cost + ($price * ($product_cost / 100) * $qlt) : $cost + ($product_cost * $qlt);
-				$custom_total = $custom_total + ($price * $qlt);
-				$notice = "Category Cost of Goods was used for some products.";
-				$cat_isset = 1;
-			} else {
-				$product_cost = get_option( '_pixel_cost_of_goods_cost_val');
-				$cost_type = get_option( '_pixel_cost_of_goods_cost_type' );
-				if ($product_cost) {
-					$cost = ($cost_type == 'percent') ? $cost + ((float) $price * ((float) $product_cost / 100) * $qlt) : (float) $cost + ((float) $product_cost * $qlt);
-					$custom_total = $custom_total + ($price * $qlt);
-					if ($cat_isset == 1) {
-						$notice = "Global and Category Cost of Goods was used for some products.";
-					} else {
-						$notice = "Global Cost of Goods was used for some products.";
-					}
-				} else {
-					$notice = "Some products don't have Cost of Goods.";
-				}
-			}
-		}
-	}
-	if (($cart_total - $cost) > 0) {
-		$profit = $cart_total - $cost;
-	} else {
-		$profit = '';
-	}
-	if ('' !== $notice) {
-		if (($custom_total - $cost) > 0) {
-			$profit = $custom_total - $cost;
-		} else {
-			$profit = '';
-		}
-	}
+function getAvailableProductCogOrder($order) {
+    $cost = 0;
+    $custom_total = 0;
+    $cat_isset = 0;
+    $isWithoutTax = get_option( '_pixel_cog_tax_calculating')  == 'no';
 
-	return $profit;
+    $shipping = $order->get_shipping_total("edit");
+    $order_total = $order->get_total('edit') - $shipping;
+
+    if($isWithoutTax) {
+        $order_total -=  $order->get_total_tax('edit');
+    } else {
+        $order_total -= $order->get_shipping_tax("edit");
+    }
+
+    foreach ( $order->get_items() as $item_id => $item ) {
+        $product_id = ( isset( $item['variation_id'] ) && 0 != $item['variation_id'] ? $item['variation_id'] : $item['product_id'] );
+        $product = wc_get_product($product_id);
+        if(!$product) continue;
+
+        $cost_type = get_post_meta( $product->get_id(), '_pixel_cost_of_goods_cost_type', true );
+        $product_cost = get_post_meta( $product->get_id(), '_pixel_cost_of_goods_cost_val', true );
+
+        if(!$product_cost && $product->is_type("variation")) {
+            $cost_type = get_post_meta( $product->get_parent_id(), '_pixel_cost_of_goods_cost_type', true );
+            $product_cost = get_post_meta( $product->get_parent_id(), '_pixel_cost_of_goods_cost_val', true );
+        }
+
+
+        $args = array( 'qty'   => 1, 'price' => $product->get_price());
+        $qlt = $item['quantity'];
+
+        if($isWithoutTax) {
+            $price = wc_get_price_excluding_tax($product, $args);
+        } else {
+            $price = wc_get_price_including_tax($product,$args);
+        }
+
+        if ($product_cost) {
+            $cost = ($cost_type == 'percent') ? $cost + ($price * ($product_cost / 100) * $qlt) : $cost + ($product_cost * $qlt);
+            $custom_total = $custom_total + ($price * $qlt);
+        } else {
+            $product_cost = get_product_cost_by_cat( $product_id );
+            $cost_type = get_product_type_by_cat( $product_id );
+            if ($product_cost) {
+                $cost = ($cost_type == 'percent') ? $cost + ($price * ($product_cost / 100) * $qlt) : $cost + ($product_cost * $qlt);
+                $custom_total = $custom_total + ($price * $qlt);
+                $notice = "Category Cost of Goods was used for some products.";
+                $cat_isset = 1;
+            } else {
+                $product_cost = get_option( '_pixel_cost_of_goods_cost_val');
+                $cost_type = get_option( '_pixel_cost_of_goods_cost_type' );
+                if ($product_cost) {
+                    $cost = ($cost_type == 'percent') ? (float) $cost + ((float) $price * ((float) $product_cost / 100) * $qlt) : (float) $cost + ((float) $product_cost * $qlt);
+                    $custom_total = $custom_total + ($price * $qlt);
+                    if ($cat_isset == 1) {
+                        $notice = "Global and Category Cost of Goods was used for some products.";
+                    } else {
+                        $notice = "Global Cost of Goods was used for some products.";
+                    }
+                } else {
+                    $notice = "Some products don't have Cost of Goods.";
+                }
+            }
+        }
+    }
+
+    return $order_total - $cost;
+
+}
+
+function getAvailableProductCogCart() {
+    $cart_total = 0.0;
+    $cost = 0;
+    $notice = '';
+    $custom_total = 0;
+    $cat_isset = 0;
+    $isWithoutTax = get_option( '_pixel_cog_tax_calculating')  == 'no';
+
+    $shipping = WC()->cart->get_shipping_total();
+    $cart_total = WC()->cart->get_total('edit') - $shipping;
+
+    if($isWithoutTax) {
+        $cart_total -=  WC()->cart->get_total_tax();
+    } else {
+        $cart_total -= WC()->cart->get_shipping_tax();
+    }
+
+    foreach ( WC()->cart->cart_contents as $cart_item_key => $item ) {
+        $product_id = ( isset( $item['variation_id'] ) && 0 != $item['variation_id'] ? $item['variation_id'] : $item['product_id'] );
+
+        $product = wc_get_product($product_id);
+
+        $cost_type = get_post_meta( $product->get_id(), '_pixel_cost_of_goods_cost_type', true );
+        $product_cost = get_post_meta( $product->get_id(), '_pixel_cost_of_goods_cost_val', true );
+
+        if(!$product_cost && $product->is_type("variation")) {
+            $cost_type = get_post_meta( $product->get_parent_id(), '_pixel_cost_of_goods_cost_type', true );
+            $product_cost = get_post_meta( $product->get_parent_id(), '_pixel_cost_of_goods_cost_val', true );
+        }
+
+        $args = array( 'qty'   => 1, 'price' => $product->get_price());
+        if($isWithoutTax) {
+            $price = wc_get_price_excluding_tax($product, $args);
+        } else {
+            $price = wc_get_price_including_tax($product,$args);
+        }
+        $qlt = $item['quantity'];
+
+
+        if ($product_cost) {
+            $cost = ($cost_type == 'percent') ? $cost + ($price * ($product_cost / 100) * $qlt) : $cost + ($product_cost * $qlt);
+            $custom_total = $custom_total + ($price * $qlt);
+        } else {
+            $product_cost = get_product_cost_by_cat( $product_id );
+            $cost_type = get_product_type_by_cat( $product_id );
+            if ($product_cost) {
+                $cost = ($cost_type == 'percent') ? $cost + ($price * ($product_cost / 100) * $qlt) : $cost + ($product_cost * $qlt);
+                $custom_total = $custom_total + ($price * $qlt);
+                $notice = "Category Cost of Goods was used for some products.";
+                $cat_isset = 1;
+            } else {
+                $product_cost = get_option( '_pixel_cost_of_goods_cost_val');
+                $cost_type = get_option( '_pixel_cost_of_goods_cost_type' );
+                if ($product_cost) {
+                    $cost = ($cost_type == 'percent') ? $cost + ((float) $price * ((float) $product_cost / 100) * $qlt) : (float) $cost + ((float) $product_cost * $qlt);
+                    $custom_total = $custom_total + ($price * $qlt);
+                    if ($cat_isset == 1) {
+                        $notice = "Global and Category Cost of Goods was used for some products.";
+                    } else {
+                        $notice = "Global Cost of Goods was used for some products.";
+                    }
+                } else {
+                    $notice = "Some products don't have Cost of Goods.";
+                }
+            }
+        }
+    }
+
+    return $cart_total - $cost;
 
 }
 
@@ -406,7 +452,7 @@ function isDisabledForCurrentRole() {
 		if ( in_array( $role, $disabled_for ) ) {
 
 			add_action( 'wp_head', function() {
-				echo "<script type='text/javascript'>console.warn('PixelYourSite is disabled for current user role.');</script>\r\n";
+				echo "<script type='application/javascript'>console.warn('PixelYourSite is disabled for current user role.');</script>\r\n";
 			} );
 
 			return true;
@@ -417,6 +463,12 @@ function isDisabledForCurrentRole() {
 
 	return false;
 
+}
+function pys_round( $val, $precision = 2, $mode = PHP_ROUND_HALF_UP )  {
+    if ( ! is_numeric( $val ) ) {
+        $val = floatval( $val );
+    }
+    return round( $val, $precision, $mode );
 }
 
 /**
@@ -502,9 +554,10 @@ function getTheContentParams( $allowedContentTypes = array() ) {
 			$term = get_term_by( 'slug', $slug, 'post_tag' );
 
 			$params['post_type']    = 'tag';
-			$params['post_id']      = $term->term_id;
-			$params['content_name'] = $term->name;
-
+			if($term) {
+                $params['post_id']      = $term->term_id;
+                $params['content_name'] = $term->name;
+            }
 		} else {
             
             $term = get_term_by( 'slug', get_query_var( 'term' ), get_query_var( 'taxonomy' ) );
@@ -630,17 +683,9 @@ function sanitizeKey( $name ) {
 
 function getCommonEventParams() {
 
-	$user = wp_get_current_user();
-
-	if ( $user->ID !== 0 ) {
-		$user_roles = implode( ',', $user->roles );
-	} else {
-		$user_roles = 'guest';
-	}
-
 	return array(
 		'domain'     => substr( get_home_url( null, '', 'http' ), 7 ),
-		'user_roles' => $user_roles,
+		'user_roles' => getUserRoles(),
 		'plugin'     => 'PixelYourSite',
 	);
 
@@ -653,9 +698,12 @@ function sanitizeParams( $params ) {
 	foreach ( $params as $key => $value ) {
 
 		// skip empty (but not zero)
-		if ( ! isset( $value ) && ! is_numeric( $value ) ) {
-			continue;
-		}
+        if ( ! isset( $value )  ||
+            (is_string($value) && $value == "") ||
+            (is_array($value) && count($value) == 0)
+        ) {
+            continue;
+        }
 
 		$key = sanitizeKey( $key );
 
@@ -665,8 +713,10 @@ function sanitizeParams( $params ) {
 			$sanitized[ $key ] = (float) $value; // do not encode value to avoid error messages on Pinterest
 		} elseif ( is_bool( $value ) ) {
 			$sanitized[ $key ] = (bool) $value;
-		} else {
-			$sanitized[ $key ] = html_entity_decode( $value );
+		} elseif (is_numeric($value)) {
+            $sanitized[ $key ] = $value;
+        } else {
+			$sanitized[ $key ] = stripslashes(html_entity_decode( $value ));
 		}
 
 	}
@@ -708,7 +758,10 @@ function endsWith( $haystack, $needle ) {
                 $temp ) !== false );
 }
 
-function getCurrentPageUrl() {
+function getCurrentPageUrl($removeQuery = false) {
+    if($removeQuery) {
+        return $_SERVER['HTTP_HOST'] . str_replace("?".$_SERVER['QUERY_STRING'],"",$_SERVER['REQUEST_URI']);
+    }
     return  $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] ;
 }
 
@@ -979,4 +1032,83 @@ function getPysCurrencySymbols() {
         'ZAR' => '&#82;',
         'ZMW' => 'ZK',
     );
+}
+
+function getStandardParams() {
+    global $post;
+    $cpt = get_post_type();
+    $params = array(
+        'page_title' => "",
+        'post_type' => $cpt,
+        'post_id' => "",
+        'plugin' => "PixelYourSite"
+    );
+
+    if(PYS()->getOption("enable_user_role_param")) {
+        $params['user_role'] = getUserRoles();
+    }
+
+    if(PYS()->getOption("enable_event_url_param")) {
+        $params['event_url'] = getCurrentPageUrl(true);
+    }
+
+    if(is_singular( 'post' )) {
+        $params['page_title'] = $post->post_title;
+        $params['post_id']   = $post->ID;
+
+    } elseif( is_singular( 'page' ) || is_home()) {
+        $params['post_type']    = 'page';
+        $params['post_id']      = is_home() ? null : $post->ID;
+        $params['page_title']   = is_home() == true ? get_bloginfo( 'name' ) : $post->post_title;
+
+    } elseif (isWooCommerceActive() && is_shop()) {
+        $page_id = (int) wc_get_page_id( 'shop' );
+        $params['post_type'] = 'page';
+        $params['post_id']   = $page_id;
+        $params['page_title'] = get_the_title( $page_id );
+
+    } elseif ( is_category() ) {
+        $cat  = get_query_var( 'cat' );
+        $term = get_category( $cat );
+        $params['post_type']    = 'category';
+        $params['post_id']      = $cat;
+        $params['page_title'] = $term->name;
+
+    } elseif ( is_tag() ) {
+        $slug = get_query_var( 'tag' );
+        $term = get_term_by( 'slug', $slug, 'post_tag' );
+        $params['post_type']    = 'tag';
+        if($term) {
+            $params['post_id']      = $term->term_id;
+            $params['page_title']   = $term->name;
+        }
+
+
+    } elseif (is_tax()) {
+        $term = get_term_by( 'slug', get_query_var( 'term' ), get_query_var( 'taxonomy' ) );
+        $params['post_type'] = get_query_var( 'taxonomy' );
+        if ( $term ) {
+            $params['post_id']      = $term->term_id;
+            $params['page_title'] = $term->name;
+        }
+
+    } elseif ((isWooCommerceActive() && $cpt == 'product') ||
+        (isEddActive() && $cpt == 'download') ) {
+        $params['page_title'] = $post->post_title;
+        $params['post_id']   = $post->ID;
+
+    } else if ($post instanceof \WP_Post) {
+        $params['page_title'] = $post->post_title;
+        $params['post_id']   = $post->ID;
+    }
+
+    if(!PYS()->getOption("enable_post_type_param")) {
+        unset($params['post_type']);
+    }
+    if(!PYS()->getOption("enable_post_id_param")) {
+        unset($params['post_id']);
+    }
+
+
+    return $params;
 }

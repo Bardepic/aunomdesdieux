@@ -39,7 +39,7 @@
         </div>
     </div>
     <div class="col-lg-5 promo-left">
-        <img src="wp-content/themes/anddv2/assets/img/books_3"/>
+        <img src="wp-content/themes/anddv2/dist/img/books_3.png"/>
       </div>
   </div>
 </section>

@@ -9,12 +9,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 /** @noinspection PhpIncludeInspection */
 require_once PYS_FREE_PATH . '/modules/facebook/function-helpers.php';
 require_once PYS_FREE_PATH . '/modules/facebook/FDPEvent.php';
-require_once PYS_FREE_PATH . '/modules/facebook/PYSServerEventAsyncTask.php';
-require_once PYS_FREE_PATH . '/modules/facebook/PYSServerEventHelper.php';
+
+
 
 use PixelYourSite\Facebook\Helpers;
-use FacebookAds\Api;
-use FacebookAds\Object\ServerSide\EventRequest;
+use PYS_PRO_GLOBAL\FacebookAds\Api;
+use PYS_PRO_GLOBAL\FacebookAds\Object\ServerSide\EventRequest;
 
 class Facebook extends Settings implements Pixel {
 	
@@ -45,11 +45,11 @@ class Facebook extends Settings implements Pixel {
 	    	/** @var PYS $core */
 	    	$core->registerPixel( $this );
 	    } );
+        add_action( 'wp_head', array( $this, 'output_meta_tag' ) );
 
-        // initialize the s2s event async task
-        new PYSServerEventAsyncTask();
-	    
     }
+
+
     
     public function enabled() {
 	    return $this->getOption( 'enabled' );
@@ -62,8 +62,7 @@ class Facebook extends Settings implements Pixel {
 			$pixel_id = $this->getPixelIDs();
 			$this->configured = $this->enabled()
 			                    && count( $pixel_id ) > 0
-                                && !empty($pixel_id[0])
-			                    && ! apply_filters( 'pys_pixel_disabled', false, $this->getSlug() );
+                                && !empty($pixel_id[0]);
 		}
 		
 		return $this->configured;
@@ -73,9 +72,12 @@ class Facebook extends Settings implements Pixel {
 	public function getPixelIDs() {
 		
 		$ids = (array) $this->getOption( 'pixel_id' );
-		$ids = (array) reset( $ids );// return first id only
-		return apply_filters("pys_facebook_ids",$ids);
 
+        if(count($ids) == 0|| empty($ids[0])) {
+            return apply_filters("pys_facebook_ids",[]);
+        } else {
+            return apply_filters("pys_facebook_ids",(array) reset( $ids )); // return first id only
+        }
 	}
 	
 	public function getPixelOptions() {
@@ -89,85 +91,295 @@ class Facebook extends Settings implements Pixel {
 			'wooVariableAsSimple' => $this->getOption( 'woo_variable_as_simple' ),
             'downloadEnabled' => $this->getOption( 'download_event_enabled' ),
             'formEventEnabled' => $this->getOption( 'form_event_enabled' ),
+            "ajaxForServerEvent"  => $this->getOption( "server_event_use_ajax" ),
             'serverApiEnabled'    => $this->isServerApiEnabled() && count($this->getApiToken()) > 0,
             'wooCRSendFromServer' => $this->getOption("woo_complete_registration_send_from_server") && $this->getOption("woo_complete_registration_fire_every_time")
 		);
 		
 	}
+
+
+    /**
+     * Create pixel event and fill it
+     * @param SingleEvent $event
+     * @return SingleEvent[]
+     */
+    public function generateEvents($event) {
+        $pixelEvents = [];
+        if ( ! $this->configured() ) {
+            return [];
+        }
+
+        $pixelIds = $this->getPixelIDs();
+
+        if(count($pixelIds) > 0) {
+            $pixelEvent = clone $event;
+            if($this->addParamsToEvent($pixelEvent)) {
+                $pixelEvent->addPayload([ 'pixelIds' => $pixelIds ]);
+                $pixelEvents[] = $pixelEvent;
+            }
+        }
+
+        return $pixelEvents;
+    }
+
+	// need refactoring
+    private function addDataToEvent($eventData,&$event) {
+        $params = $eventData["data"];
+        unset($eventData["data"]);
+        //unset($eventData["name"]);
+        $event->addParams($params);
+        $event->addPayload($eventData);
+    }
+
+    /**
+     * @param SingleEvent $event
+     * @return bool|mixed|null
+     */
+	function addParamsToEvent(&$event) {
+        if ( ! $this->configured() ) {
+            return false;
+        }
+        $isActive = false;
+
+        switch ($event->getId()) {
+            //Signal events
+            case "signal_page_scroll":
+            case "signal_time_on_page":
+            case "signal_form":
+            case "signal_download":
+            case "signal_comment": {
+                $isActive = $this->getOption('signal_events_enabled');
+            }break;
+
+
+            case 'init_event':{
+                $eventData = $this->getPageViewEventParams();
+                if($eventData) {
+                    $isActive = true;
+                    $this->addDataToEvent($eventData,$event);
+                }
+            } break;
+            case 'search_event':{
+                $eventData =  $this->getSearchEventParams();
+                if ($eventData) {
+                    $isActive = true;
+                    $this->addDataToEvent($eventData, $event);
+                }
+            }break;
+
+            case 'custom_event':{
+                $eventData =  $this->getCustomEventParams( $event->args );
+                if ($eventData) {
+                    $isActive = true;
+                    $this->addDataToEvent($eventData, $event);
+                }
+            }break;
+            case 'fdp_view_content':{
+                if($this->getOption("fdp_view_content_enabled")){
+                    $params = Helpers\getFDPViewContentEventParams();
+                    $params["content_type"] = $this->getOption("fdp_content_type");
+                    $payload = array(
+                        'name' => "ViewContent",
+                    );
+                    $event->addParams($params);
+                    $event->addPayload($payload);
+                    $isActive = true;
+                }
+            }break;
+            case 'fdp_view_category':{
+                if($this->getOption("fdp_view_category_enabled")){
+                    $params = Helpers\getFDPViewCategoryEventParams();
+                    $params["content_type"] = $this->getOption("fdp_content_type");
+                    $payload = array(
+                        'name' => "ViewCategory",
+                    );
+                    $event->addParams($params);
+                    $event->addPayload($payload);
+                    $isActive = true;
+                }
+            }break;
+
+            case 'fdp_add_to_cart':{
+                if($this->getOption("fdp_add_to_cart_enabled")){
+                    $params = Helpers\getFDPAddToCartEventParams();
+                    $params["content_type"] = $this->getOption("fdp_content_type");
+                    $params["value"] = $this->getOption("fdp_add_to_cart_value");
+                    $params["currency"] = $this->getOption("fdp_currency");
+                    $trigger_type = $this->getOption("fdp_add_to_cart_event_fire");
+                    $trigger_value = $trigger_type == "scroll_pos" ?
+                        $this->getOption("fdp_add_to_cart_event_fire_scroll") :
+                        $this->getOption("fdp_add_to_cart_event_fire_css") ;
+                    $payload = array(
+                        'name' => "AddToCart",
+                        'trigger_type' => $trigger_type,
+                        'trigger_value' => [$trigger_value]
+                    );
+                    $event->addParams($params);
+                    $event->addPayload($payload);
+                    $isActive = true;
+                }
+            }break;
+
+            case 'fdp_purchase':{
+                if($this->getOption("fdp_view_category_enabled")){
+                    $params = Helpers\getFDPPurchaseEventParams();
+                    $params["content_type"] = $this->getOption("fdp_content_type");
+                    $params["value"] = $this->getOption("fdp_purchase_value");
+                    $params["currency"] = $this->getOption("fdp_currency");
+                    $trigger_type = $this->getOption("fdp_purchase_event_fire");
+                    $trigger_value = $trigger_type == "scroll_pos" ?
+                        $this->getOption("fdp_purchase_event_fire_scroll") :
+                        $this->getOption("fdp_purchase_event_fire_css");
+                    $payload = array(
+                        'name' => "Purchase",
+                        'trigger_type' => $trigger_type,
+                        'trigger_value' => [$trigger_value]
+                    );
+                    $event->addParams($params);
+                    $event->addPayload($payload);
+                    $isActive = true;
+                }
+            }break;
+
+            case 'woo_view_content': {
+                $eventData =  $this->getWooViewContentEventParams();
+                if($eventData) {
+                    $isActive = true;
+                    $this->addDataToEvent($eventData,$event);
+                }
+            }break;
+            case 'woo_add_to_cart_on_cart_page':
+            case 'woo_add_to_cart_on_checkout_page': {
+                $eventData =  $this->getWooAddToCartOnCartEventParams();
+                if ($eventData) {
+                    $isActive = true;
+                    $this->addDataToEvent($eventData, $event);
+                }
+            }break;
+            case 'woo_remove_from_cart': {
+                $isActive =  $this->getWooRemoveFromCartParams( $event);
+            }break;
+            case 'woo_view_category':{
+                $eventData =  $this->getWooViewCategoryEventParams();
+                if($eventData) {
+                    $isActive = true;
+                    $this->addDataToEvent($eventData,$event);
+                }
+            }break;
+            case 'woo_initiate_checkout': {
+                $eventData =  $this->getWooInitiateCheckoutEventParams();
+                if ($eventData) {
+                    $isActive = true;
+                    $this->addDataToEvent($eventData, $event);
+                }
+            }break;
+            case 'woo_purchase':{
+                $eventData =  $this->getWooPurchaseEventParams();
+                if ($eventData) {
+                    $isActive = true;
+                    $this->addDataToEvent($eventData, $event);
+                }
+            }break;
+            case 'edd_view_content':{
+                $eventData = $this->getEddViewContentEventParams();
+                if ($eventData) {
+                    $isActive = true;
+                    $this->addDataToEvent($eventData, $event);
+                }
+            } break;
+            case 'edd_add_to_cart_on_checkout_page': {
+                $eventData = $this->getEddCartEventParams('AddToCart');
+                if ($eventData) {
+                    $isActive = true;
+                    $this->addDataToEvent($eventData, $event);
+                }
+            }break;
+            case 'edd_remove_from_cart': {
+                $eventData =  $this->getEddRemoveFromCartParams( $event->args['item'] );
+                if ($eventData) {
+                    $isActive = true;
+                    $this->addDataToEvent($eventData, $event);
+                }
+            }break;
+
+            case 'edd_view_category': {
+                $eventData = $this->getEddViewCategoryEventParams();
+                if ($eventData) {
+                    $isActive = true;
+                    $this->addDataToEvent($eventData, $event);
+                }
+            }break;
+
+            case 'edd_initiate_checkout': {
+                $eventData = $this->getEddCartEventParams('InitiateCheckout');
+                if ($eventData) {
+                    $isActive = true;
+                    $this->addDataToEvent($eventData, $event);
+                }
+            }break;
+            case 'edd_purchase': {
+
+                $eventData = $this->getEddCartEventParams('Purchase');
+                if ($eventData) {
+                    $isActive = true;
+                    $this->addDataToEvent($eventData, $event);
+                }
+            }break;
+            case 'woo_complete_registration': {
+                if( $this->getOption("woo_complete_registration_fire_every_time") ||
+                    get_user_meta( get_current_user_id(), 'pys_complete_registration', true )
+                ) {
+                    $eventData = $this->getWooCompleteRegistrationEventParams();
+                    if($eventData) {
+                        $isActive = true;
+                        $this->addDataToEvent($eventData,$event);
+                    }
+                }
+            }break;
+
+            case 'woo_add_to_cart_on_button_click':{
+                if (  $this->getOption( 'woo_add_to_cart_enabled' ) && PYS()->getOption( 'woo_add_to_cart_on_button_click' ) ) {
+                    $isActive = true;
+                    if(isset($event->args['productId'])) {
+                        $eventData =  $this->getWooAddToCartOnButtonClickEventParams( $event->args );
+                        $event->addParams($eventData["params"]);
+                    }
+                    $event->addPayload(array(
+                        'name'=>"AddToCart",
+                    ));
+                }
+            }break;
+
+            case 'edd_add_to_cart_on_button_click':{
+
+                if (  $this->getOption( 'edd_add_to_cart_enabled' ) && PYS()->getOption( 'edd_add_to_cart_on_button_click' ) ) {
+                    $isActive = true;
+                    if($event->args != null) {
+                        $eventData =  $this->getEddAddToCartOnButtonClickEventParams( $event->args );
+                        $event->addParams($eventData);
+                    }
+
+                    $event->addPayload(array(
+                        'name'=>"AddToCart"
+                    ));
+                }
+            }break;
+
+
+        }
+        if($isActive) {
+
+            if($this->isServerApiEnabled()) {
+                $event->payload['eventID'] = EventIdGenerator::guidv4();
+            }
+        }
+        return $isActive;
+    }
 	
 	public function getEventData( $eventType, $args = null ) {
-		
-		if ( ! $this->configured() ) {
-			return false;
-		}
 
-		switch ( $eventType ) {
-			case 'init_event':
-				return $this->getPageViewEventParams();
-
-			case 'general_event':
-				return $this->getGeneralEventParams();
-
-			case 'search_event':
-				return $this->getSearchEventParams();
-
-			case 'custom_event':
-				return $this->getCustomEventParams( $args );
-
-            case 'fdp_event':
-                return $this->getFDPEventParams( $args );
-
-			case 'woo_view_content':
-				return $this->getWooViewContentEventParams();
-
-			case 'woo_add_to_cart_on_button_click':
-				return $this->getWooAddToCartOnButtonClickEventParams( $args );
-
-			case 'woo_add_to_cart_on_cart_page':
-			case 'woo_add_to_cart_on_checkout_page':
-				return $this->getWooAddToCartOnCartEventParams();
-
-			case 'woo_remove_from_cart':
-				return $this->getWooRemoveFromCartParams( $args );
-
-			case 'woo_view_category':
-				return $this->getWooViewCategoryEventParams();
-
-			case 'woo_initiate_checkout':
-				return $this->getWooInitiateCheckoutEventParams();
-
-			case 'woo_purchase':
-				return $this->getWooPurchaseEventParams();
-
-			case 'edd_view_content':
-				return $this->getEddViewContentEventParams();
-
-			case 'edd_add_to_cart_on_button_click':
-				return $this->getEddAddToCartOnButtonClickEventParams( $args );
-
-			case 'edd_add_to_cart_on_checkout_page':
-				return $this->getEddCartEventParams( 'AddToCart' );
-
-			case 'edd_remove_from_cart':
-				return $this->getEddRemoveFromCartParams( $args );
-
-			case 'edd_view_category':
-				return $this->getEddViewCategoryEventParams();
-
-			case 'edd_initiate_checkout':
-				return $this->getEddCartEventParams( 'InitiateCheckout' );
-
-			case 'edd_purchase':
-				return $this->getEddCartEventParams( 'Purchase' );
-            case 'hCR':
-                return $this->getCompleteRegistrationEventParams('hCR');
-            case 'complete_registration':
-                return $this->getCompleteRegistrationEventParams();
-
-                default:
-				return false;   // event does not supported
-		}
-		
+        return false;
 	}
 
 	public function outputNoScriptEvents() {
@@ -178,24 +390,29 @@ class Facebook extends Settings implements Pixel {
 
 		$eventsManager = PYS()->getEventsManager();
 
-		foreach ( $eventsManager->getStaticEvents( 'facebook' ) as $eventName => $events ) {
-            if($eventName == "hCR") continue;
+		foreach ( $eventsManager->getStaticEvents( 'facebook' ) as $eventId => $events ) {
+
 			foreach ( $events as $event ) {
+                if( $event['name'] == "hCR") continue;
 				foreach ( $this->getPixelIDs() as $pixelID ) {
 
 					$args = array(
 						'id'       => $pixelID,
-						'ev'       => urlencode( $eventName ),
+						'ev'       => urlencode( $event['name'] ),
 						'noscript' => 1,
 					);
 
 					foreach ( $event['params'] as $param => $value ) {
+                        if(is_array($value))
+                            $value = json_encode($value);
 						@$args[ 'cd[' . $param . ']' ] = urlencode( $value );
 					}
-
+                    $src = add_query_arg( $args, 'https://www.facebook.com/tr' );
+                    $src = str_replace("[","%5B",$src); //pass markup validation
+                    $src = str_replace("]","%5D",$src);
 					// ALT tag used to pass ADA compliance
 					printf( '<noscript><img height="1" width="1" style="display: none;" src="%s" alt="facebook_pixel"></noscript>',
-						add_query_arg( $args, 'https://www.facebook.com/tr' ) );
+                        $src);
 
 					echo "\r\n";
 
@@ -206,10 +423,10 @@ class Facebook extends Settings implements Pixel {
 	}
 	
 	private function getPageViewEventParams() {
-
+	    $data = array();
 		return array(
 			'name'  => 'PageView',
-			'data'  => array(),
+			'data'  => $data,
 		);
 
 	}
@@ -265,7 +482,7 @@ class Facebook extends Settings implements Pixel {
 			}
 
 			$params['content_type'] = 'product';
-			$params['content_ids']  = json_encode( $post_ids );
+			$params['content_ids']  =  $post_ids ;
 
 		}
 
@@ -374,7 +591,7 @@ class Facebook extends Settings implements Pixel {
 		$product = wc_get_product( $post->ID );
         if(!$product) return false;
 		$content_id = Helpers\getFacebookWooProductContentId( $post->ID );
-		$params['content_ids']  = json_encode( $content_id );
+		$params['content_ids']  =  $content_id ;
 
 		if ( wooProductIsType( $product, 'variable' ) && ! $this->getOption( 'woo_variable_as_simple' ) ) {
 			$params['content_type'] = 'product_group';
@@ -393,14 +610,12 @@ class Facebook extends Settings implements Pixel {
 
 		// currency, value
 		if ( PYS()->getOption( 'woo_view_content_value_enabled' ) ) {
-            
-            $amount = getWooProductPriceToDisplay( $post->ID );
-            
+
             $value_option = PYS()->getOption( 'woo_view_content_value_option' );
             $global_value = PYS()->getOption( 'woo_view_content_value_global', 0 );
 
 
-            $params['value']    = getWooEventValue( $value_option, $amount, $global_value, $post->ID );
+            $params['value']    = getWooEventValue( $value_option, $global_value,100, $post->ID ,1);
             $params['currency'] = get_woocommerce_currency();
 
 		}
@@ -409,15 +624,16 @@ class Facebook extends Settings implements Pixel {
 		if ( Helpers\isDefaultWooContentIdLogic() ) {
 
 			// Facebook for WooCommerce plugin does not support new Dynamic Ads parameters
-			$params['contents'] = json_encode( array(
+			$params['contents'] =  array(
 				array(
 					'id'         => (string) reset( $content_id ),
 					'quantity'   => 1,
-					'item_price' => getWooProductPriceToDisplay( $post->ID ),
+					//'item_price' => getWooProductPriceToDisplay( $post->ID ),
 				)
-			) );
+			);
 
 		}
+
 
 		$params['product_price'] = getWooProductPriceToDisplay( $post->ID );
 
@@ -429,17 +645,33 @@ class Facebook extends Settings implements Pixel {
 
 	}
 
-	private function getWooAddToCartOnButtonClickEventParams( $product_id ) {
+	private function getWooAddToCartOnButtonClickEventParams( $args ) {
 
 		if ( ! $this->getOption( 'woo_add_to_cart_enabled' ) || ! PYS()->getOption( 'woo_add_to_cart_on_button_click' ) ) {
 			return false;
 		}
+        $product_id = $args['productId'];
+        $quantity = $args['quantity'];
 
-		$params = Helpers\getWooSingleAddToCartParams( $product_id, 1 );
+		$params = Helpers\getWooSingleAddToCartParams( $product_id, $quantity );
+        $data = array(
+            'params' => $params,
+        );
 
-		return array(
-			'data' => $params,
-		);
+        $product = wc_get_product($product_id);
+        if(!$product) return false;
+        if($product->get_type() == 'grouped') {
+            $grouped = array();
+            foreach ($product->get_children() as $childId) {
+                $conId = Helpers\getFacebookWooProductContentId( $childId );
+                $grouped[$childId] = array(
+                    'content_id' => (string) reset($conId),
+                    'price' => getWooProductPriceToDisplay( $childId )
+                );
+            }
+            $data['grouped'] = $grouped;
+        }
+		return $data;
 
 	}
 
@@ -458,17 +690,21 @@ class Facebook extends Settings implements Pixel {
 
 	}
 
-	private function getWooRemoveFromCartParams( $cart_item ) {
+    /**
+     * @param SingleEvent $event
+     * @return bool
+     */
+	private function getWooRemoveFromCartParams( $event ) {
 
 		if ( ! $this->getOption( 'woo_remove_from_cart_enabled' ) ) {
 			return false;
 		}
-
+        $cart_item = $event->args['item'];
 		$product_id = Helpers\getFacebookWooCartItemId( $cart_item );
 		$content_id = Helpers\getFacebookWooProductContentId( $product_id );
 
 		$params['content_type'] = 'product';
-		$params['content_ids']  = json_encode( $content_id );
+		$params['content_ids']  =  $content_id ;
 
 		// content_name, category_name, tags
 		$params['tags'] = implode( ', ', getObjectTerms( 'product_tag', $product_id ) );
@@ -477,15 +713,19 @@ class Facebook extends Settings implements Pixel {
 		$params['num_items'] = $cart_item['quantity'];
 		$params['product_price'] = getWooProductPriceToDisplay( $product_id );
 
-		$params['contents'] = json_encode( array(
+		$params['contents'] =  array(
 			array(
 				'id'         => (string) reset( $content_id ),
 				'quantity'   => $cart_item['quantity'],
-				'item_price' => getWooProductPriceToDisplay( $product_id ),
+				//'item_price' => getWooProductPriceToDisplay( $product_id ),
 			)
-		) );
-
-		return array( 'data' => $params );
+		) ;
+        $data = [
+            'name' => "RemoveFromCart",
+        ];
+        $event->addParams($params);
+        $event->addPayload($data);
+		return true;
 
 	}
 
@@ -513,7 +753,10 @@ class Facebook extends Settings implements Pixel {
             
             foreach ( $parent_ids as $term_id ) {
                 $term = get_term_by( 'id', $term_id, 'product_cat' );
-                $params['content_category'][] = $term->name;
+                if($term) {
+                    $params['content_category'][] = $term->name;
+                }
+
             }
             
         }
@@ -527,7 +770,7 @@ class Facebook extends Settings implements Pixel {
 			$content_ids = array_merge( Helpers\getFacebookWooProductContentId( $posts[ $i ]->ID ), $content_ids );
 		}
 
-		$params['content_ids']  = json_encode( $content_ids );
+		$params['content_ids']  =  $content_ids ;
 
 		return array(
 			'name' => 'ViewCategory',
@@ -543,6 +786,7 @@ class Facebook extends Settings implements Pixel {
 		}
 
 		$params = Helpers\getWooCartParams( 'InitiateCheckout' );
+
 
 		return array(
 			'name' => 'InitiateCheckout',
@@ -599,7 +843,7 @@ class Facebook extends Settings implements Pixel {
         }
         
         $params['content_type']  = 'product';
-        $params['content_ids']   = json_encode( $content_ids );
+        $params['content_ids']   =  $content_ids ;
         $params['content_name']  = implode( ', ', $content_names );
         $params['category_name'] = implode( ', ', $content_categories );
         
@@ -607,7 +851,7 @@ class Facebook extends Settings implements Pixel {
         if ( Helpers\isDefaultWooContentIdLogic() ) {
             
             // Facebook for WooCommerce plugin does not support new Dynamic Ads parameters
-            $params['contents'] = json_encode( $contents );
+            $params['contents'] =  $contents ;
             
         }
         
@@ -617,17 +861,18 @@ class Facebook extends Settings implements Pixel {
         
         $params['num_items'] = $num_items;
         
-        $amount = $order->get_total();
+
         $value_option = PYS()->getOption( 'woo_purchase_value_option' );
         $global_value = PYS()->getOption( 'woo_purchase_value_global', 0 );
 
-        $params['value'] = getWooEventValueOrder( $value_option, $amount, $global_value, $order_id, $content_ids );
+        $params['value'] = getWooEventValueOrder( $value_option, $order, $global_value );
         $params['currency'] = get_woocommerce_currency();
-        //$params['transaction_id'] = $order_id;
-        $params['eventID'] = $order_id;
+        $params['order_id'] = $order_id;
+
 		return array(
 			'name' => 'Purchase',
 			'data' => $params,
+            'woo_order' => $order_id
 		);
 
 	}
@@ -664,7 +909,7 @@ class Facebook extends Settings implements Pixel {
 			}
 
 		}
-		
+
 		return array(
 			'name'  => $customEvent->getFacebookEventType(),
 			'data'  => $params,
@@ -682,7 +927,7 @@ class Facebook extends Settings implements Pixel {
 
 		$params = array(
 			'content_type' => 'product',
-			'content_ids'  => json_encode( Helpers\getFacebookEddDownloadContentId( $post->ID ) ),
+			'content_ids'  =>  Helpers\getFacebookEddDownloadContentId( $post->ID ) ,
 		);
 
 		// content_name, category_name
@@ -697,18 +942,19 @@ class Facebook extends Settings implements Pixel {
 			$global_value   = PYS()->getOption( 'edd_view_content_value_global', 0 );
 
 			$params['value'] = getEddEventValue( $value_option, $amount, $global_value );
-			$params['currency'] = edd_get_currency();
+            $params['currency'] = edd_get_currency();
 
 		}
 
+
 		// contents
-		$params['contents'] = json_encode( array(
+		$params['contents'] =  array(
 			array(
 				'id'         => (string) $post->ID,
 				'quantity'   => 1,
-				'item_price' => getEddDownloadPriceToDisplay( $post->ID ),
+				//'item_price' => getEddDownloadPriceToDisplay( $post->ID ),
 			)
-		) );
+		);
 
 		return array(
 			'name'  => 'ViewContent',
@@ -721,9 +967,6 @@ class Facebook extends Settings implements Pixel {
 	private function getEddAddToCartOnButtonClickEventParams( $download_id ) {
 		global $post;
 
-		if ( ! $this->getOption( 'edd_add_to_cart_enabled' ) || ! PYS()->getOption( 'edd_add_to_cart_on_button_click' ) ) {
-			return false;
-		}
 
 		// maybe extract download price id
 		if ( strpos( $download_id, '_') !== false ) {
@@ -734,7 +977,7 @@ class Facebook extends Settings implements Pixel {
 
 		$params = array(
 			'content_type' => 'product',
-			'content_ids'  => json_encode( Helpers\getFacebookEddDownloadContentId( $post->ID ) ),
+			'content_ids'  =>  Helpers\getFacebookEddDownloadContentId( $post->ID ),
 		);
 
 		// content_name, category_name
@@ -749,22 +992,20 @@ class Facebook extends Settings implements Pixel {
 			$global_value = PYS()->getOption( 'edd_add_to_cart_value_global', 0 );
 
 			$params['value'] = getEddEventValue( $value_option, $amount, $global_value );
-			$params['currency'] = edd_get_currency();
+            $params['currency'] = edd_get_currency();
 
 		}
 
 		// contents
-		$params['contents'] = json_encode( array(
+		$params['contents'] =  array(
 			array(
 				'id'         => (string) $download_id,
 				'quantity'   => 1,
-				'item_price' => getEddDownloadPriceToDisplay( $download_id ),
+				//'item_price' => getEddDownloadPriceToDisplay( $download_id ),
 			)
-		) );
-
-		return array(
-			'data' => $params,
 		);
+
+		return $params;
 
 	}
 
@@ -777,6 +1018,10 @@ class Facebook extends Settings implements Pixel {
 		} elseif ( $context == 'Purchase' && ! $this->getOption( 'edd_purchase_enabled' ) ) {
 			return false;
 		}
+
+        $data = array(
+            'name' => $context
+        );
 
 		if ( $context == 'AddToCart' ) {
 			$value_enabled  = PYS()->getOption( 'edd_add_to_cart_value_enabled' );
@@ -853,15 +1098,15 @@ class Facebook extends Settings implements Pixel {
 			$contents[] = array(
 				'id'         => (string) $download_id,
 				'quantity'   => $cart_item['quantity'],
-				'item_price' => getEddDownloadPriceToDisplay( $download_id, $price_index ),
+				//'item_price' => getEddDownloadPriceToDisplay( $download_id, $price_index ),
 			);
 
 		}
 
-		$params['content_ids']   = json_encode( $content_ids );
+		$params['content_ids']   =  $content_ids ;
 		$params['content_name']  = implode( ', ', $content_names );
 		$params['category_name'] = implode( ', ', $content_categories );
-		$params['contents']      = json_encode( $contents );
+		$params['contents']      =  $contents ;
 
 		$tags           = array_slice( array_unique( $tags ), 0, 100 );
 		$params['tags'] = implode( ', ', $tags );
@@ -870,26 +1115,22 @@ class Facebook extends Settings implements Pixel {
 
 		// currency, value
 		if ( $value_enabled ) {
-		 
+            $params['currency'] = edd_get_currency();
 			$params['value']    = getEddEventValue( $value_option, $amount, $global_value );
-			$params['currency'] = edd_get_currency();
-
 		}
+
+
 
 		if ( $context == 'Purchase' ) {
-
 			$payment_key = getEddPaymentKey();
 			$payment_id = (int) edd_get_purchase_id_by_key( $payment_key );
-
-			$params['currency'] = edd_get_currency();
             $params['value'] = edd_get_payment_amount( $payment_id );
-
+            $params['currency'] = edd_get_currency();
+            $data['edd_order'] = $payment_id;
 		}
 
-		return array(
-			'name' => $context,
-			'data' => $params,
-		);
+        $data['data'] = $params;
+		return $data;
 
 	}
 
@@ -912,16 +1153,18 @@ class Facebook extends Settings implements Pixel {
 		$params = array_merge( $params, Helpers\getEddCustomAudiencesOptimizationParams( $download_id ) );
 
 		$params['num_items'] = $cart_item['quantity'];
-
-		$params['contents'] = json_encode( array(
+		$params['contents'] =  array(
 			array(
 				'id'         => (string) $download_id,
 				'quantity'   => $cart_item['quantity'],
-				'item_price' => getEddDownloadPriceToDisplay( $download_id, $price_index ),
+				//'item_price' => getEddDownloadPriceToDisplay( $download_id, $price_index ),
 			)
-		) );
+		);
 
-		return array( 'data' => $params );
+		return array(
+            'name' => 'RemoveFromCart',
+            'data' => $params
+        );
 
 	}
 
@@ -935,6 +1178,7 @@ class Facebook extends Settings implements Pixel {
 		$params['content_type'] = 'product';
 
 		$term = get_term_by( 'slug', get_query_var( 'term' ), 'download_category' );
+		if(!$term) return false;
 		$params['content_name'] = $term->name;
 
 		$parent_ids = get_ancestors( $term->term_id, 'download_category', 'taxonomy' );
@@ -942,7 +1186,9 @@ class Facebook extends Settings implements Pixel {
 
 		foreach ( $parent_ids as $term_id ) {
 			$term = get_term_by( 'id', $term_id, 'download_category' );
-			$params['content_category'][] = $term->name;
+			if($term) {
+                $params['content_category'][] = $term->name;
+            }
 		}
 
 		$params['content_category'] = implode( ', ', $params['content_category'] );
@@ -955,7 +1201,7 @@ class Facebook extends Settings implements Pixel {
 				$content_ids );
 		}
 
-		$params['content_ids']  = json_encode( $content_ids );
+		$params['content_ids']  =  $content_ids ;
 
 		return array(
 			'name' => 'ViewCategory',
@@ -968,24 +1214,40 @@ class Facebook extends Settings implements Pixel {
      * @return array
      */
     public function getApiToken() {
-        $ids = (array) $this->getOption( 'server_access_api_token' );
+        $tokens = array();
+        $pixelids = (array) $this->getOption( 'pixel_id' );
+        $serverids = (array) $this->getOption( 'server_access_api_token' );
+
+        if(count($pixelids) == 0) return array();
+
         if ( isSuperPackActive() && SuperPack()->getOption( 'enabled' ) && SuperPack()->getOption( 'additional_ids_enabled' ) ) {
-            return $ids;
+            foreach ($pixelids as $key => $val) {
+                if(isset($serverids[$key]))
+                    $tokens[$val] = $serverids[$key];
+            }
         } else {
-            return (array) reset( $ids ); // return first id only
+            $tokens[$pixelids[0]] =  reset( $serverids ); // return first id only
         }
+
+        return $tokens;
     }
 
     /**
      * @return array
      */
     public function getApiTestCode() {
-        $ids = (array) $this->getOption( 'test_api_event_code' );
+        $testCode = array();
+        $pixelids = (array) $this->getOption( 'pixel_id' );
+        $serverTestCode = (array) $this->getOption( 'test_api_event_code' );
         if ( isSuperPackActive() && SuperPack()->getOption( 'enabled' ) && SuperPack()->getOption( 'additional_ids_enabled' ) ) {
-            return $ids;
+            foreach ($pixelids as $key => $val) {
+                if(isset($serverTestCode[$key]))
+                    $testCode[$val] = $serverTestCode[$key];
+            }
         } else {
-            return (array) reset( $ids ); // return first id only
+            $testCode[$pixelids[0]] =  reset( $serverTestCode ); // return first id only
         }
+        return $testCode;
     }
 
     /**
@@ -995,44 +1257,9 @@ class Facebook extends Settings implements Pixel {
         return $this->getOption("use_server_api");
     }
 
-    public function trackEventByServerApi($event) {
-        do_action('pys_send_server_event', $event);
-    }
 
-    public static function sendServerRequest($events) {
-        if (empty($events)) {
-            return;
-        }
-        $access_token = Facebook::instance()->getApiToken();
-        $testCode = Facebook::instance()->getApiTestCode();
-        $isDebug = PYS()->getOption( 'debug_enabled' );
-        $pixel_Ids = Facebook::instance()->getPixelIDs();
 
-        $count = count($pixel_Ids);
-        for($i=0; $i<$count; $i++) {
-
-            if(empty($access_token[$i])) continue;
-
-            $api = Api::init(null, null, $access_token[$i]);
-
-            $request = (new EventRequest($pixel_Ids[$i]))->setEvents($events);
-            $request->setPartnerAgent("dvpixelyoursite");
-            if(!empty($testCode[$i]))  $request->setTestEventCode($testCode[$i]);
-
-            if($isDebug)  error_log("send fb api request ".print_r($request,true));
-
-            try{
-                $response = $request->execute();
-            } catch (\Exception   $e) {
-                error_log("error send Fb API request ".$e->getMessage());
-
-            }
-
-            if($isDebug && isset($response))  error_log("fb api response ".print_r($response,true));
-        }
-    }
-
-    private function getCompleteRegistrationEventParams($args=null) {
+    private function getWooCompleteRegistrationEventParams($args=null) {
 
         if ( ! $this->getOption( 'complete_registration_event_enabled' ) ) {
             return false;
@@ -1040,15 +1267,22 @@ class Facebook extends Settings implements Pixel {
         $params = array();
         if($this->getOption("woo_complete_registration_fire_every_time") &&
             $this->getOption("woo_complete_registration_use_custom_value") &&
-            isset( $_REQUEST['key'] ) ) {
+            isset( $_REQUEST['key'] ) && $_REQUEST['key'] != "" ) {
             $params = Helpers\getCompleteRegistrationOrderParams();
         }
+        $name = isset($args) && $args == "hCR" ? "hCR" : 'CompleteRegistration';
 
         return $params = array(
-            'name'  => isset($args) && $args == "hCR" ? "hCR" : 'CompleteRegistration',
+            'name'  => $name,
             'data'  => $params,
         );
 
+    }
+    function output_meta_tag() {
+        $metaTags = (array) Facebook()->getOption( 'verify_meta_tag' );
+        foreach ($metaTags as $tag) {
+            echo $tag;
+        }
     }
 }
 

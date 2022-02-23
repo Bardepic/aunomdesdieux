@@ -33,8 +33,42 @@ $new_event_url = buildAdminUrl( 'pixelyoursite', 'events', 'edit' );
     <div class="card-body">
 	    <?php PYS()->render_switcher_input( 'custom_events_enabled' ); ?>
         <h4 class="switcher-label">Enable Events</h4>
+        <div class="mt-3">
+            <a  class="btn btn-sm btn-light btn-events-import">Import Events</a>
+            <a   class="btn  ml-3  btn-sm btn-light btn-events-export">Export Events</a>
+            <a class="ml-3 badge badge-pill badge-pro" href="https://www.pixelyoursite.com/?utm_source=pys-free-plugin&amp;utm_medium=pro-badge&amp;utm_campaign=pro-feature/?utm_source=pys-free-plugin&amp;utm_medium=pro-badge&amp;utm_campaign=pro-feature" target="_blank" >Pro Feature <i class="fa fa-external-link" aria-hidden="true"></i></a>
+        </div>
     </div>
 </div>
+<div class="card card-static">
+    <div class="card-header">
+        Recommeded videos
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col">
+                <p><a href="https://www.youtube.com/watch?v=kEp5BDg7dP0" target="_blank">How to fire EVENTS with PixelYourSite (22:28) - watch now</a></p>
+                <p><a href="https://www.youtube.com/watch?v=PcXYYGOvahc" target="_blank">Track URL tags as event parameters (8:15) - watch now</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="card card-static">
+    <div class="card-header">
+        About Parameters
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col">
+                <p>All the events you configure here will automatically get the following parameters for all the tags:
+                    <i>page_title, post_type, post_id, event_URL, user_role, plugin, landing_page (pro), event_time (pro), event_day (pro), event_month (pro), traffic_source (pro), UTMs (pro).</i></p>
+                <p>Exception: Google Analytics Universal will not get all these parameters. Only <i>event_time (pro), event_day (pro), event_month (pro), traffic_source (pro)</i> are sent as custom dimensions.</p>
+                <p>You can add other parameters when you configure the events.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <div class="card card-static">
     <div class="card-header">
@@ -67,17 +101,17 @@ $new_event_url = buildAdminUrl( 'pixelyoursite', 'events', 'edit' );
                     </tr>
                     </thead>
                     <tbody>
-        
+
                     <?php foreach ( CustomEventFactory::get() as $event ) : ?>
-        
+
                         <?php
-        
+
                         /** @var CustomEvent $event */
-        
+
                         $event_edit_url = buildAdminUrl( 'pixelyoursite', 'events', 'edit', array(
                             'id' => $event->getPostId()
                         ) );
-        
+
                         $event_enable_url = buildAdminUrl( 'pixelyoursite', 'events', 'enable', array(
                             'pys'      => array(
                                 'event' => array(
@@ -86,7 +120,7 @@ $new_event_url = buildAdminUrl( 'pixelyoursite', 'events', 'edit' );
                             ),
                             '_wpnonce' => wp_create_nonce( 'pys_enable_event' ),
                         ) );
-        
+
                         $event_disable_url = buildAdminUrl( 'pixelyoursite', 'events', 'disable', array(
                             'pys'      => array(
                                 'event' => array(
@@ -95,7 +129,7 @@ $new_event_url = buildAdminUrl( 'pixelyoursite', 'events', 'edit' );
                             ),
                             '_wpnonce' => wp_create_nonce( 'pys_disable_event' ),
                         ) );
-        
+
                         $event_remove_url = buildAdminUrl( 'pixelyoursite', 'events', 'remove', array(
                             'pys'      => array(
                                 'event' => array(
@@ -104,9 +138,9 @@ $new_event_url = buildAdminUrl( 'pixelyoursite', 'events', 'edit' );
                             ),
                             '_wpnonce' => wp_create_nonce( 'pys_remove_event' ),
                         ) );
-                        
+
                         ?>
-        
+
                         <tr data-post_id="<?php esc_attr_e( $event->getPostId() ); ?>"
                             class="<?php echo $event->isEnabled() ? '' : 'disabled'; ?>">
                             <td>
@@ -137,7 +171,7 @@ $new_event_url = buildAdminUrl( 'pixelyoursite', 'events', 'edit' );
                                 <?php else : ?>
                                     <i class="fa fa-facebook-square" style="opacity: .25;"></i>
                                 <?php endif; ?>
-                                
+
                                 <?php if ( GA()->enabled() && $event->isGoogleAnalyticsEnabled() ) : ?>
                                     <i class="fa fa-area-chart"></i>
                                 <?php else : ?>
@@ -145,7 +179,7 @@ $new_event_url = buildAdminUrl( 'pixelyoursite', 'events', 'edit' );
                                 <?php endif; ?>
 
                                 <i class="fa fa-google" style="opacity: .25;"></i>
-                             
+
                                 <?php if ( Pinterest()->enabled() && $event->isPinterestEnabled() ) : ?>
                                     <i class="fa fa-pinterest-square"></i>
                                 <?php else : ?>
@@ -153,9 +187,9 @@ $new_event_url = buildAdminUrl( 'pixelyoursite', 'events', 'edit' );
                                 <?php endif; ?>
                             </td>
                         </tr>
-        
+
                     <?php endforeach; ?>
-        
+
                     </tbody>
                 </table>
             </div>

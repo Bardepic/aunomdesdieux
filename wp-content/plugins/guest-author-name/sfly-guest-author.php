@@ -5,24 +5,26 @@ Plugin Name: (Simply) Guest Author Name
 Slug: guest-author-name
 Plugin URI: http://plugins.shooflysolutions.com/guest-author-name
 Description: An ideal plugin for cross posting. Guest Author Name helps you to publish posts by authors without having to add them as users. If the Guest Author field is filled in on the post, the Guest Author name will override the author.  The optional Url link allows you to link to another web site.
-Version: 3.99
+Version: 4.32
 Author URI: http://www.shooflysolutions.com
 Copyright (C) 2015, 2016 Shoofly Solutions
-Contact me at http://www.shooflysolutions.com.com*/
+Contact me at http://www.shooflysolutions.com*/
 defined( 'ABSPATH' ) or die( 'No script kiddies please!' );
 remove_filter('pre_user_description', 'wp_filter_kses');
 
 
 
+
 	$path =  (plugin_dir_path(__FILE__));
 	require_once( $path . 'guest-author-notices.php' );
+	require_once( $path . 'sfly-guest-author-settings.php' );
 
 	/**
 	 * sfly_guest_author class.
 	 */
-	 if ( !class_exists( 'sfly_guest_author' ) )
-	 {
-	class sfly_guest_author
+	 if ( !class_exists( 'sfly_guest_author' ) ):
+
+	 class sfly_guest_author
 	{
 		/**
 		 * __construct function.
@@ -33,30 +35,27 @@ remove_filter('pre_user_description', 'wp_filter_kses');
 		function __construct()
 		{
 			$options = get_option( 'guest_author_name_settings' );
-			$admin = isset( $options['guest_author_name_admin'] ) ? true : false ;
+			self::sfly_guest_author_add_filters();
+			$this->comment_list = false;
+			add_action('wp_enqueue_scripts', array( $this, 'sfly_guest_author_enqueue_scripts' ) );
+			add_action( 'get_sidebar', array($this, 'sfly_guest_author_add_filters' ));
+			$disable = isset( $options['guest_author_disable_for_comments'] ) ? true : false ;
 
-			if (!is_admin() || $admin || wp_doing_ajax() )
-			{
-				add_filter( 'the_author', array( $this, 'guest_author_name' ), 12 );
-				add_filter( 'get_the_author_display_name', array( $this, 'guest_author_name' ), 12 );
+			if ( $disable ) {
+				'disable is on';
+//				add_filter( 'the_content', array($this, 'sfly_guest_author_content' ) );
+//				add_filter( 'get_the_excerpt', array($this, 'sfly_guest_author_excerpt' ) );
+				add_filter( 'wp_list_comments_args', array( $this, 'list_comments' ) ); //manage comments
+
 			}
-			if (!is_admin() || wp_doing_ajax() )
+
+
+
+			if (is_admin())
 			{
-		        add_action( 'the_post', array($this, 'register_author'), 10);
-				add_filter( 'author_link', array( $this, 'guest_author_link' ), 12 );
-				add_filter( 'get_the_author_link', array( $this, 'guest_author_link' ), 12 );
-				add_filter( 'get_the_author_url', array( $this, 'guest_author_link' ), 21 );
-				add_filter( 'author_description', array( $this, 'guest_author_description'), 12) ;
-				add_filter( 'get_the_author_description', array( $this,  'guest_author_description' ), 12 ) ;
-				add_filter( 'get_the_author_id', array( $this, 'guest_author_id' ), 12 ) ;
-				add_filter( 'author_id', array( $this, 'guest_author_id' ), 12 );
-				add_filter( 'get_avatar', array( $this, 'guest_author_avatar' ), 40, 1 );
-			}
-			else
-			{
+
 					add_action( 'add_meta_boxes', array( $this, 'add_meta_box' ) );
-					add_action( 'save_post', array( $this, 'save' ) );
-					$options = get_option( 'guest_author_name_settings' );
+					add_action( 'save_post', array( $this, 'save_meta' ), 10, 2 );
 					$quickedit = isset( $options['guest_author_name_quickedit'] ) ? true : false ;
 					if ( $quickedit )
 					{
@@ -64,11 +63,270 @@ remove_filter('pre_user_description', 'wp_filter_kses');
 						add_action( 'manage_posts_custom_column', array( $this, 'render_post_columns' ), 10, 2 ) ;
 						add_filter( 'manage_edit-post_columns', array( $this, 'change_posttype_columns' ) );
 						add_action( 'admin_enqueue_scripts', array( $this, 'guest_admin_scripts' ) );
+						//add_action( 'save_post', array ($this, 'save_quick_meta' ), 10, 3 );
 					}
 			}
 
 		}
 
+		/**
+		 * sfly_guest_author_open_link function.
+		 * append jQuery to existing script file
+		 * @access public
+		 * @return void
+		 */
+		function sfly_guest_author_open_link( $options ){
+
+		//	$options = get_option( 'guest_author_name_settings' );
+
+			$selector = esc_attr(  $options['guest_author_url_selector_single'] ) ;
+			if ( $selector ) {
+			$script="
+						(function($) {
+						var url      = window.location.href;
+						var href   =  jQuery('.sfly_guest-author-post $selector' ).attr('href');
+
+
+						if ( url != href ) {
+						      $('.sfly_guest-author-post $selector' ).attr('target', '_blank');
+						}
+						})(jQuery);";
+			$success = wp_add_inline_script('guest_author_post_scripts', $script);
+
+
+			}
+
+		}
+
+
+		/**
+		 * sfly_guest_author_enqueue_scripts function.
+		 * Enqueue Scripts
+		 * @access public
+		 * @return void
+		 */
+		function sfly_guest_author_enqueue_scripts() {
+			wp_enqueue_script('jquery');
+
+			wp_enqueue_script( 'guest_author_post_scripts' ,  plugins_url('assets/guest-author-post.js', __FILE__), array('jquery'), '1.00', true);
+
+			$options = get_option( 'guest_author_name_settings' );
+			$open = isset( $options['guest_author_open_new_window'] ) ? true : false ;
+
+
+			if ( $open  ) {
+				$this->sfly_guest_author_open_link( $options );
+			}
+
+
+		}
+
+		/**
+		 * sfly_guest_author_add_filters function.
+		 * Add Faliters
+		 * @access public
+		 * @return void
+		 */
+		function sfly_guest_author_add_filters() {
+			$admin = isset( $options['guest_author_name_admin'] ) ? true : false ;
+
+			if (!is_admin() || $admin || wp_doing_ajax() )
+			{
+				add_filter( 'the_author', array( $this, 'guest_author_name' ), 12 );
+				add_filter( 'get_the_author_display_name', array( $this, 'guest_author_name' ), 12 );
+
+			}
+			if (!is_admin() || wp_doing_ajax() )
+			{
+				add_action ( 'ampforwp_modify_author_name', array( $this, 'guest_author_name' ), 12 );
+
+		        add_action( 'the_post', array($this, 'register_author' ), 10);
+				add_filter( 'author_link', array( $this, 'guest_author_link' ), 12 );
+				add_filter( 'get_the_author_link', array( $this, 'guest_author_link' ), 12 );
+				add_filter( 'get_the_author_url', array( $this, 'guest_author_link' ), 21 );
+				add_filter( 'ampforwp_author_description', array( $this, 'guest_author_description_amp' ), 12 ) ;
+				add_filter( 'author_description', array( $this, 'guest_author_description'), 12) ;
+				add_filter( 'get_the_author_description', array( $this,  'guest_author_description' ), 12 ) ;
+				add_filter( 'get_the_author_id', array( $this, 'guest_author_id' ), 12 ) ;
+				add_filter( 'author_id', array( $this, 'guest_author_id' ), 12 );
+				add_filter( 'get_avatar', array( $this, 'guest_author_avatar' ), 40, 5 );
+				add_filter( 'get_avatar_url', array( $this, 'guest_avatar_link' ), 40, 3);
+				$include = isset( $options['guest_author_include_guest'] ) ? true : false ;
+
+				add_filter( 'wpseo_canonical', array( $this, 'guest_author_canonical_link') );
+				if ( $include )
+					add_action( 'pre_get_posts',     array( $this, 'author_query' ) , 50 );   //Fix query for author query without guest posts or guest author
+
+				add_filter("td_wp_booster_module_constructor", array( $this, 'set_guest_author_ids' ), 10, 2   );
+				add_action('comment_form_top', array ($this, 'sfly_guest_author_remove_filters'), 10);  //remove filters before comments form
+				add_filter( 'body_class',        array( $this, 'sfly_guest_author_body_class') );            //add some classes to the body class
+
+
+			}
+		}
+		/**
+		 * sfly_guest_author_remove_filters function.
+		 * Remove Filters
+		 * @access public
+		 * @return void
+		 */
+		function sfly_guest_author_remove_filters() {
+				remove_action( 'the_post', array($this, 'register_author') );
+				remove_filter( 'author_link', array( $this, 'guest_author_link' ) );
+				remove_filter( 'get_the_author_link', array( $this, 'guest_author_link' ) );
+				remove_filter( 'get_the_author_url', array( $this, 'guest_author_link' ) );
+				remove_filter( 'author_description', array( $this, 'guest_author_description') ) ;
+				remove_filter( 'get_the_author_description', array( $this,  'guest_author_description' ) ) ;
+				remove_filter( 'get_the_author_id', array( $this, 'guest_author_id' ) ) ;
+				remove_filter( 'author_id', array( $this, 'guest_author_id' ) );
+				remove_filter( 'get_avatar', array( $this, 'guest_author_avatar' ) );
+				remove_filter( 'get_avatar_url', array( $this, 'guest_avatar_link' ) );
+				remove_filter( 'wpseo_canonical', array( $this, 'guest_author_canonical_link') );
+				remove_action( 'pre_get_posts',     array( $this, 'author_query' )  );   //Fix query for author query without guest posts or guest author
+				remove_filter("td_wp_booster_module_constructor", array( $this, 'set_guest_author_ids' )   );
+				remove_filter( 'the_author', array( $this, 'guest_author_name' ) );
+				remove_filter( 'get_the_author_display_name', array( $this, 'guest_author_name' ) );
+				remove_filter( 'body_class',        array( $this, 'sfly_guest_author_body_class') );            //add some classes to the body class
+		}
+		function sfly_guest_author_excerpt( $content ) {
+			global $authordata;
+			if ( isset ($authordata) && $authordata->guest_author ) {
+				$content = $content . '<label style="visibility:hidden" class="guest-author-data" data-url="' . $authordata->user_url . '" data-name="' . $authordata->display_name . '">';
+			}
+			return $content;
+		}
+		function sfly_guest_author_content( $content ) {
+			global $authordata;
+			if ( isset ($authordata) && $authordata->guest_author ) {
+				$content = $content . '<label style="visibility:hidden" id="guest-author-data" data-url="' . $authordata->user_url . '" data-name="' . $authordata->display_name . '">';
+			}
+			return $content;
+		}
+		/**
+		 * guest_author_canonical_link function.
+		 * Handle paging
+		 * @access public
+		 * @param mixed $url
+		 * @return void
+		 */
+		function guest_author_canonical_link ($url)
+		{
+			global $wp;
+
+
+			$paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
+			if ( $paged > 1 ) {
+
+				$current_url = home_url( add_query_arg( array(), $wp->request ) );
+				if ($url != $current_url)
+					return $current_url;
+			}
+			return $url;
+
+		}
+
+		/**
+		 * list_comments function.
+		 * disable guest author functions for comment list
+		 * add hooks to ensure that the correct comment author & link
+		 * @access public
+		 * @param array $r  - arguments not changed)
+		 * @return void
+		 */
+		function list_comments($r)
+		{
+
+			$this->comment_list = true;
+			self::sfly_guest_author_remove_filters();
+			global $guest_author_post_id;
+
+			if ( $guest_author_post_id != null )
+			{
+
+				add_filter( 'get_comment_author', array( $this, 'comment_author' ), 99, 3);
+				add_filter( 'get_comment_author_link', array( $this, 'comment_author_link' ), 99, 3 );
+			}
+			return $r;
+
+		}
+		/**
+		 * comment_author function.
+		 * get the original comment author which can be overriden when it's a guest author post.
+		 * @access public
+		 * @param string $author - author name
+		 * @param int $comment_ID - comment id
+		 * @param object $comment
+		 * @return void
+		 */
+		function comment_author( $author, $comment_ID, $comment )
+		{
+			if ( $author != $comment->author )
+				return $comment->comment_author;
+			else
+				return $author;
+
+
+
+		}
+		/**
+		 * comment_author_link function.
+		 *
+		 * @access public
+		 * @param mixed $return
+		 * @param mixed $author  - author name
+		 * @param mixed $comment_ID  - comment id
+		 * @return void
+		 */
+		function comment_author_link( $return, $author, $comment_ID )
+		{
+
+		   $comment = get_comment( $comment_ID );
+		   if ( $author != $comment->author ) {
+			   $url = $comment->comment_author_url;
+
+
+			   if ( empty( $url ) || 'http://' == $url ) {
+			        $return = $author;
+			   } else {
+			        $return = "<a href='$url' rel='external nofollow' class='url'>$author</a>";
+			   }
+		   }
+		   return $return;
+    	}
+		/**
+		 * is_classic_editor_plugin_active function.
+		 * check to see if the classic editor is active
+		 * @access public
+		 * @return void
+		 */
+		function is_classic_editor_plugin_active() {
+		    if ( ! function_exists( 'is_plugin_active' ) ) {
+		        include_once ABSPATH . 'wp-admin/includes/plugin.php';
+		    }
+
+		    if ( is_plugin_active( 'classic-editor/classic-editor.php' ) ) {
+		        return true;
+		    }
+
+		    return false;
+		}
+		/**
+		 * sfly_guest_author_body_class function.
+		 * Add a class to the post body
+		 * @access public
+		 * @param mixed $classes
+		 * @return void
+		 */
+		function sfly_guest_author_body_class ($classes) {
+			global $post;
+			if ( is_single() ) {
+			$author = get_post_meta( $post->ID, 'sfly_guest_author_names', true );
+	        if ($author)
+
+				$classes[] = 'sfly_guest-author-post';
+		    }
+		    return $classes;
+		}
 		/**
 		 * register_author function.
 		 * register the author data for the current post being edited
@@ -77,11 +335,13 @@ remove_filter('pre_user_description', 'wp_filter_kses');
 		 */
 		function register_author() {
 			$id = $this->get_post_id();
-			$author = get_post_meta( $id, 'sfly_guest_author_names', true );
-	        if (!$author)
+			$gauthor = get_post_meta( $id, 'sfly_guest_author_names', true );
+			$guest_author_post_id = null;
+	        if (!$gauthor)
 	            return;
 
-			global $authordata;
+			global $authordata, $post, $guest_author_post_id;
+			$guest_author_post_id = $post->ID;
 			$author = new WP_User();
 
 			$author->user_url = $this->guest_author_link('');
@@ -89,6 +349,7 @@ remove_filter('pre_user_description', 'wp_filter_kses');
 			$author->user_description = $this->guest_author_description('');
 			$author->display_name = $this->guest_author_name('');
 			$author->ID = $this->guest_author_id('');
+			$author->guest_author = true;
 
 			// register the global
 			$authordata = $author;
@@ -104,8 +365,12 @@ remove_filter('pre_user_description', 'wp_filter_kses');
 		 */
 		function guest_admin_scripts( $hook )
 		{
-			if ( $hook == 'edit.php' )
-				wp_enqueue_script('guest_author_name_scripts', plugins_url('/guest-author.js', __FILE__), array('inline-edit-post'), '1.00');
+
+			if ( $hook == 'edit.php' ) {
+				wp_enqueue_script('guest_author_name_scripts', plugins_url('assets/guest-author.js', __FILE__), array('inline-edit-post'), '1.00');
+
+			}
+
 		}
 		/**
 		 * guest_author_id function.
@@ -121,6 +386,44 @@ remove_filter('pre_user_description', 'wp_filter_kses');
 				$id = NULL;
 			return $id;
 		}
+
+		/**
+		 * author_query function.
+		 *
+		 * @access public
+		 * @param mixed $query
+		 * @return void
+		 */
+		function author_query( $query ) {
+			if ( $query->is_author )
+			{
+				$meta_query = $query->get('meta_query');
+				if ( is_string($meta_query) )
+				{
+					if ($meta_query == '' )
+						$meta_query = array();
+					else
+						$meta_query = array ( $meta_query );
+				}
+				//Add our meta query to the original meta queries
+				$meta_query['relation'] = "OR";
+				$meta_query[] =  array(
+					'key'     => 'sfly_guest_author_names',
+					'compare' => 'NOT EXISTS',
+					'value' => ''
+				);
+				$meta_query[] =  array(
+					'key'     => 'sfly_guest_author_names',
+					'compare' => '=',
+					'value' => ''
+				);
+				$query->set('meta_query',$meta_query);
+			}
+
+			return $query;
+		}
+
+
 		/**
 		 * guest_author_name function.
 		 * get the guest author name if one exists
@@ -179,6 +482,25 @@ remove_filter('pre_user_description', 'wp_filter_kses');
 			return $description;
 		}
 		/**
+		 * guest_author_description function.
+		 * get the guest author bio if it exists
+		 * @access public
+		 * @param string $description - real author bio
+		 * @return string
+		 */
+		function guest_author_description_amp( $description ) {
+
+			$new_description = $this->guest_author_description($description);
+			$pattern = "/<p[^>]*><\\/p[^>]*>/"; // regular expression
+			$description = preg_replace($pattern, '', $description);
+
+			if ( $new_description != $description ) {
+				$description = '<p>' . $new_description . '</p>';
+			}
+
+			return $description;
+		}
+		/**
 		 * guest_author_email function.
 		 * get the guest author email if one exists
 		 * @access public
@@ -203,20 +525,143 @@ remove_filter('pre_user_description', 'wp_filter_kses');
 		 * @param string $avatar - real author avatar
 		 * @return avatar html
 		 */
-		function guest_author_avatar( $avatar )
+		function guest_author_avatar( $avatar, $id_or_email, $size, $default, $alt )
+
 		{
-			global $comment;
-			if ( isset( $comment ) )
+
+			global $guest_author_post_id;
+			if ( (!isset( $guest_author_post_id) ||  $guest_author_post_id <= 0 ) ) {
 				return $avatar;
-			$id = $this->get_post_id();
-			$author = get_post_meta( $id, 'sfly_guest_author_names', true );
-			if ( $author )
-			{
-				$email = get_post_meta( $id, 'sfly_guest_author_email', true );
-				if ($email)
-					$avatar = "<img src='{$this->get_guest_gravatar($email)}'/>";
 			}
+
+			global $comment;
+
+
+
+			if ( isset( $comment )  && $this->comment_list) {
+				$email = $comment->comment_author_email;
+				if ( $email ) {
+					//$image_path = $this->get_guest_gravatar($email);
+					$avatar = $this->guest_author_avatar_url_link( $avatar, $email) ; // '<img src="'.$image_path.'" width="'.$size.'" height="'.$size.'" />';
+				} else {
+					$avatar = $default;
+				}
+
+
+			} else {
+				$id = $this->get_post_id();
+
+				$author = get_post_meta( $id, 'sfly_guest_author_names', true );
+
+				if ( $author )
+				{
+					$email = get_post_meta( $id, 'sfly_guest_author_email', true );
+
+
+					if ( $email ) {
+					//	$image_path = $this->get_author_avatar($email);
+						$avatar =  $this->guest_author_avatar_url_link( $avatar, $email);// '<img src="'.$image_path.'" width="'.$size.'" height="'.$size.'" />';
+					}
+
+				}
+			}
+
 			return $avatar;
+		}
+
+		/**
+		 * guest_avatar_link function.
+		 *
+		 * @access public
+		 * @param mixed $email
+		 * @param array $args (default: array())
+		 * @return void
+		 */
+		function guest_avatar_link( $url, $email, $args = array() ) {
+
+			global $guest_author_post_id;
+			global $comment;
+			if ( isset( $comment ) &&  $this->comment_list ) {
+				$cemail = $comment->comment_author_email;
+				if ($cemail) {
+					$url = $this->get_guest_gravatar_link($cemail);
+				}
+			}
+			else {
+				$id = $this->get_post_id();
+
+				$author = get_post_meta( $id, 'sfly_guest_author_names', true );
+
+				if ( $author )
+				{
+					$email = get_post_meta( $id, 'sfly_guest_author_email', true );
+					if ($email) {
+						$url = $this->get_guest_gravatar_link($email);
+					}
+				}
+
+
+			}
+			return $url;
+		}
+
+		/**
+		 * guest_author_avatar_url_link function.
+		 * get the avatar url with link
+		 * @access public
+		 * @param mixed $url
+		 * @param mixed $email
+		 * @param array $args (default: array())
+		 * @return void
+		 */
+		function guest_author_avatar_url_link( $url, $email, $args = array() )
+
+		{
+
+			global $guest_author_post_id;
+
+			if ( !isset( $guest_author_post_id ) || $guest_author_post_id <= 0) {
+				return $url;
+			}
+			global $comment;
+
+			if ( isset( $comment ) &&  $this->comment_list ) {
+				$cemail = $comment->comment_author_email;
+				if ($cemail) {
+
+					$avatar_url = $this->get_guest_gravatar_link($cemail);
+
+				}
+
+			}
+			else {
+				$id = $this->get_post_id();
+
+				$author = get_post_meta( $id, 'sfly_guest_author_names', true );
+
+				if ( $author )
+				{
+					$email = get_post_meta( $id, 'sfly_guest_author_email', true );
+
+					if ($email) {
+						$avatar_url = $this->get_guest_gravatar_link($email);
+
+					}
+				}
+
+
+			}
+
+			if ( isset ( $avatar_url ) ) {
+				$avatar_url = "'" . $avatar_url . "'";
+
+				$html = preg_replace('/<a href="(http:\/\/)?[\w.]+\/([\w]+)"\s?>/',  $avatar_url ,$url);
+
+				return $html;
+			}
+			else  {
+				return $url;
+			}
 		}
 		/**
 		 * get_guest_gravatar function.
@@ -231,8 +676,10 @@ remove_filter('pre_user_description', 'wp_filter_kses');
 		 * @return void
 		 */
 		function get_guest_gravatar( $email, $s = 80, $d = 'mm', $r = 'g', $img = false, $atts = array() ) {
+
 			$url = 'http://www.gravatar.com/avatar/';
 			$url .= md5( strtolower( trim( $email ) ) );
+
 			$url .= "?s=$s&d=$d&r=$r";
 			if ( $img ) {
 				$url = '<img src="' . $url . '"';
@@ -240,7 +687,30 @@ remove_filter('pre_user_description', 'wp_filter_kses');
 					$url .= ' ' . $key . '="' . $val . '"';
 				$url .= ' />';
 			}
+
 			return $url;
+		}
+
+				/**
+		 * get_guest_gravatar_link function.
+		 *
+		 * @access public
+		 * @param mixed $email
+		 * @param int $s (default: 80)
+		 * @param string $d (default: 'mm')
+		 * @param string $r (default: 'g')
+		 * @param bool $img (default: false)
+		 * @param array $atts (default: array())
+		 * @return void
+		 */
+		function get_guest_gravatar_link( $email, $s = 80, $d = 'mm', $r = 'g', $img = false, $atts = array() ) {
+			$link = 'http://www.gravatar.com/avatar/';
+			$link .= md5( strtolower( trim( $email ) ) );
+
+			$link .= "?s=$s&d=$d&r=$r";
+
+
+			return $link;
 		}
 		/**
 		 * get_post_id function.
@@ -348,6 +818,7 @@ remove_filter('pre_user_description', 'wp_filter_kses');
 
 			}
 		}
+
 		/**
 		 * save_quick_meta function.
 		 * save the data from the quick edit screen
@@ -355,7 +826,7 @@ remove_filter('pre_user_description', 'wp_filter_kses');
 		 * @param mixed $post_id
 		 * @return void
 		 */
-		function save_quick_meta( $post_id ) {
+		function save_quick_meta( $post_id, $post ) {
 
 			$post_types = array('post', 'page');	 //limit meta box to certain post types
 			if ( in_array( $post_type, $post_types )) {
@@ -438,7 +909,8 @@ remove_filter('pre_user_description', 'wp_filter_kses');
 		 * @param mixed $post_id
 		 * @return void
 		 */
-		public function save( $post_id ) {
+		public function save_meta( $post_id, $post ) {
+
 			if ( ! isset( $_POST['sfly_guest_author_nonce'] ) )
 				return $post_id;
 			$nonce = $_POST['sfly_guest_author_nonce'];
@@ -518,176 +990,61 @@ remove_filter('pre_user_description', 'wp_filter_kses');
 			echo '<input type="text" id="sfly_guest_author_email" name="sfly_guest_author_email"';
 			echo ' value="' . esc_attr( $email ) . '" style="max-width:100%" class="widefat" size="150" />';
 		}
-	}
+			/****Functions for tag_div only ***/
 
+
+		function set_guest_author_ids($module, $post) {
+				if ( isset( $post ) ) {
+					global $g_post_id;
+					$g_post_id = $post->ID;
+					add_filter('author_link', array( $this, 'tag_div_author' ), 99);
+					add_filter( 'get_the_author_display_name', array( $this, 'tag_div_display_name' ), 99 );
+
+				}
+				else
+				{
+					$g_post_id = nulll;
+					remove_filter('author_link', array( $this, 'tag_div_author' ), 99);
+					remove_filter( 'get_the_author_display_name', array( $this, 'tag_div_display_name' ), 99 );
+				}
+
+		    }
+		function tag_div_display_name( $name )
+		{
+			global $g_post_id;
+			if ( isset(  $g_post_id ) &&  $g_post_id > 0 )
+			{
+			$author = get_post_meta( $g_post_id, 'sfly_guest_author_names', true );
+			if ( $author )
+				$name = $author;
+			}
+			return $name;
+
+
+		}
+
+		function tag_div_author($link, $authorid=null)
+		{
+			global $g_post_id;
+
+			if ( isset ( $g_post_id ) && $g_post_id  > 0 ) {
+				$author = get_post_meta( $g_post_id, 'sfly_guest_author_names', true );
+				if ( $author )
+				{
+					$link = get_post_meta( $g_post_id, 'sfly_guest_link', true );
+					if (!$link)
+						$link = "";
+				}
+
+			}
+			return $link;
+
+		}
 	}
+endif;
 
 	// Admin Settings
 
 
-	if ( !class_exists( 'guest_author_admin_menu' ) ) {
-	/**
-	 * guest_author_admin_menu class.
-	 */
-		class guest_author_admin_menu
-		{
-			function __construct()
-			{
 
-				add_action( 'admin_menu', array( $this, 'guest_author_name_add_admin_menu' ) );
-				add_action( 'admin_init', array( $this, 'guest_author_name_settings_init' ) );
-			}
-
-			/**
-			 * guest_author_name_add_admin_menu function.
-			 *
-			 * @access public
-			 * @return void
-			 */
-			function guest_author_name_add_admin_menu(  ) {
-
-				add_options_page( 'Guest Author Name', 'Guest Author Name', 'manage_options', 'guest_author_name', array( $this,  'guest_author_name_options_page' ) );
-
-			}
-
-
-			/**
-			 * guest_author_name_settings_init function.
-			 *
-			 * @access public
-			 * @return void
-			 */
-			function guest_author_name_settings_init(  ) {
-
-				register_setting( 'guest_author_pluginPage', 'guest_author_name_settings' );
-
-				add_settings_section(
-					'guest_author_name_pluginPage_section',
-					'',
-					array( $this, 'guest_author_name_settings_section_callback' ),
-					'guest_author_pluginPage' );
-
-				add_settings_field(
-					'guest_author_name_quickedit',
-					__( 'Enable Quick Edit for Guest Author Name', 'guest-author-name' ),
-					array( $this, 'guest_author_name_quickedit_render' ),
-					'guest_author_pluginPage',
-					'guest_author_name_pluginPage_section'
-				);
-
-				add_settings_field(
-					'guest_author_name_admin',
-					__( 'Display Guest Author in Author Column in Post list/admin', 'guest-author-name' ),
-					array( $this, 'guest_author_name_admin' ),
-					'guest_author_pluginPage',
-					'guest_author_name_pluginPage_section'
-				);
-				add_settings_field(
-					'guest_author_allow_html',
-					__( 'Allow html in guest author description', 'guest-author-name' ),
-					array( $this, 'guest_author_allow_html' ),
-					'guest_author_pluginPage',
-					'guest_author_name_pluginPage_section'
-				);
-
-			}
-
-
-			/**
-			 * guest_author_name_quickedit_render function.
-			 *
-			 * @access public
-			 * @return void
-			 */
-			function guest_author_name_quickedit_render(  ) {
-
-				$options = get_option( 'guest_author_name_settings' );
-				$quickedit = isset( $options['guest_author_name_quickedit'] ) ? true : false ;
-		?>
-			<input type='checkbox' name='guest_author_name_settings[guest_author_name_quickedit]' <?php checked( $quickedit, 1 ); ?> value='1'>
-			<?php
-
-			}
-
-			 /* guest_author_name_admin function.
-			 *
-			 * @access public
-			 * @return void
-			 */
-			function guest_author_name_admin(  ) {
-
-				$options = get_option( 'guest_author_name_settings' );
-				$admin = isset( $options['guest_author_name_admin'] ) ? true : false ;
-		?>
-			<input type='checkbox' name='guest_author_name_settings[guest_author_name_admin]' <?php checked( $admin, 1 ); ?> value='1'>
-			<?php
-
-			}
-
-			/* guest_author_allow_html function.
-			 *
-			 * @access public
-			 * @return void
-			 */
-			function guest_author_allow_html(  ) {
-
-				$options = get_option( 'guest_author_name_settings' );
-				$html = isset( $options['guest_author_allow_html'] ) ? true : false ;
-		?>
-			<input type='checkbox' name='guest_author_name_settings[guest_author_allow_html]' <?php checked( $html, 1 ); ?> value='1'>
-			<?php
-
-			}
-			/**
-			 * guest_author_name_settings_section_callback function.
-			 *
-			 * @access public
-			 * @return void
-			 */
-			function guest_author_name_settings_section_callback(  ) {
-
-				//echo __( 'This section description', 'guest-author-name' );
-
-			}
-
-
-			/**
-			 * guest_author_name_options_page function.
-			 *
-			 * @access public
-			 * @return void
-			 */
-			function guest_author_name_options_page(  ) {
-
-		?>
-			<form action='options.php' method='post'>
-
-				<h2>Simply Guest Author Name</h2>
-
-				<?php
-				settings_fields( 'guest_author_pluginPage' );
-				do_settings_sections( 'guest_author_pluginPage' );
-				submit_button();
-		?>
-
-			</form>
-				   <div>
-						<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
-						<h3>Thank you for using our plugin. Donations for extended support are appreciated but never required!</h3>
-						<input type="hidden" name="cmd" value="_s-xclick">
-						<input type="hidden" name="hosted_button_id" value="FTBD2UDXFJDB6">
-						<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
-						<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
-						</form>
-					</div>
-					<div >
-						<a target='_blank' href="https://wordpress.org/plugins/featured-image-pro/">You can also help by rating this plugin!</a>
-					</div>
-			<?php
-
-			}
-
-		}
-	}
-	new guest_author_admin_menu();
 	new sfly_guest_author();

@@ -23,6 +23,11 @@ final class PYS extends Settings implements Plugin {
     private $registeredPlugins = array();
 
     private $adminPagesSlugs = array();
+
+    /**
+     * @var PYS_Logger
+     */
+    private $logger;
 	
 	public static function instance() {
 		
@@ -77,9 +82,6 @@ final class PYS extends Settings implements Plugin {
 
 	    } );
 
-        add_action( 'wp_ajax_pys_api_event','PixelYourSite\EventsManager::sendApiEvent');
-        add_action( 'wp_ajax_nopriv_pys_api_event', 'PixelYourSite\EventsManager::sendApiEvent');
-
 	    add_action( 'wp_ajax_pys_get_gdpr_filters_values', array( $this, 'ajaxGetGdprFiltersValues' ) );
 	    add_action( 'wp_ajax_nopriv_pys_get_gdpr_filters_values', array( $this, 'ajaxGetGdprFiltersValues' ) );
 
@@ -87,6 +89,9 @@ final class PYS extends Settings implements Plugin {
          * Restore settings after COG plugin
          * */
         add_action( 'deactivate_pixel-cost-of-goods/pixel-cost-of-goods.php',array($this,"restoreSettingsAfterCog"));
+
+        $this->logger = new PYS_Logger();
+
     }
 
     public function init() {
@@ -124,6 +129,8 @@ final class PYS extends Settings implements Plugin {
 		    add_filter( 'facebook_for_woocommerce_integration_pixel_enabled', '__return_false' );
 	    }
 
+        $this->logger->init();
+        AjaxHookEventManager::instance()->addHooks();
     }
 
 	/**
@@ -210,7 +217,7 @@ final class PYS extends Settings implements Plugin {
 
     	// output debug info
 	    add_action( 'wp_head', function() {
-		    echo "<script type='text/javascript'>console.log('PixelYourSite Free version " . PYS_FREE_VERSION . "');</script>\r\n";
+		    echo "<script type='application/javascript'>console.log('PixelYourSite Free version " . PYS_FREE_VERSION . "');</script>\r\n";
 	    }, 1 );
 
 	    if ( isDisabledForCurrentRole() ) {
@@ -221,7 +228,7 @@ final class PYS extends Settings implements Plugin {
 	    if ( ! Facebook()->configured() && ! GA()->configured() && ! Pinterest()->configured() && ! Bing()->configured() ) {
 
 		    add_action( 'wp_head', function() {
-			    echo "<script type='text/javascript'>console.warn('PixelYourSite: no pixel configured.');</script>\r\n";
+			    echo "<script type='application/javascript'>console.warn('PixelYourSite: no pixel configured.');</script>\r\n";
 		    } );
 
 	    	return;
@@ -580,6 +587,7 @@ final class PYS extends Settings implements Plugin {
             $this->updateOptions( array(
                 'gdpr_ajax_enabled' => true,
                 'gdpr_cookie_law_info_integration_enabled' => true,
+                'consent_magic_integration_enabled' => true,
             ) );
             
             add_action( 'admin_notices', 'PixelYourSite\adminGdprAjaxEnabledNotice' );
@@ -619,6 +627,10 @@ final class PYS extends Settings implements Plugin {
         $params['woo_initiate_checkout_value_cog'] = '';
 
         $this->updateOptions($params);
+    }
+
+    public function getLog() {
+        return $this->logger;
     }
 }
 

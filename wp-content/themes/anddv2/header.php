@@ -19,9 +19,9 @@
 
  
 <script src="<?php echo get_template_directory_uri();?>/dist/js/green-audio-player.js"></script>
- 
-</head>
 <?php wp_head(); ?>
+
+</head>
 
 <body <?php body_class(); ?>>
 
