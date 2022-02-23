@@ -5,3 +5,4 @@ wp-config.php
 wp-content/uploads
 wp-content/themes/anddv2/node_modules
 .DS_Store
+wp-content/cache
