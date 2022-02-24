@@ -16,8 +16,6 @@
  <meta name="twitter:image:alt" content="Plongez dans la saga fantastique Au Nom des Dieux"/>
  <meta name="twitter:title" content="Au Nom Des Dieux - L'univers uchronique qui dépoussière les mythologies"/>
  <meta name="twitter:description" content="Au crépuscule du monde, les anciennes mythologies ont encore leur mot à dire... Une Saga Fantastique à la française, par Gautier Durrieu de Madron, auteur et passionné de mythologie."" />
-
- 
 <script src="<?php echo get_template_directory_uri();?>/dist/js/green-audio-player.js"></script>
 <?php wp_head(); ?>
 
