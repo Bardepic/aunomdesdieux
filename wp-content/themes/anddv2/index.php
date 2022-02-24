@@ -4,7 +4,7 @@
 
 <div class="example">
   <audio crossorigin>
-    <source src="<?php echo get_template_directory_uri();?>/audio/intro.mp3" type="audio/mpeg">
+    <source src="<?php echo get_template_directory_uri(); ?>/audio/intro.mp3" type="audio/mpeg">
   </audio>
 </div>
 <script>
@@ -121,8 +121,6 @@
 
 
 <p style="font-size: 0.9rem; color: #999;line-height: 1.2rem;max-width: 500px; margin: auto;">En cliquant sur valider, vous acceptez de recevoir des informations de la part de l'auteur de la saga Au Nom des Dieux, et comprenez que vous pouvez vous désabonner à tout moment.</p>
-
-
     <div class="flex flex-xs" style="justify-content: center; margin-top: 80px;">
     <div class="book">
       <div class="couv couv1"></div>
